@@ -612,10 +612,8 @@
     document.getElementById('orderSummary').textContent =
       `${t.title} · ${t.discount} · ${fmtHKD(t.price)}`;
     document.getElementById('payBtn').textContent = `Confirm Payment ${fmtHKD(t.price)}`;
-    document.getElementById('phone').value = '';
     document.getElementById('uname').value = '';
     document.getElementById('pickupCheck').checked = false;
-    document.getElementById('payBtn').disabled = true;
     showError('');
     document.getElementById('payDialog').showModal();
     setTimeout(() => document.getElementById('uname').focus(), 300);
