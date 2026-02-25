@@ -1,943 +1,705 @@
-<!DOCTYPE html>
-<html lang="zh-HK">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Batch 01 創始會員卡 · CHRONOBREWERY CO.</title>
-  <meta name="description" content="Batch 01 創始會員卡。愉景灣老朋友的特別邀請。">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>BATCH 01 | Founding Membership · CHRONOBREWERY</title>
+  <meta name="description" content="Batch 01 Founding Membership. Limited to 30. Discovery Bay supporters only.">
+
   <style>
-    /* ── Variables ── */
-    :root {
-      --bg:       #111111;
-      --card:     #1A1A1A;
-      --card2:    #222222;
-      --border:   #2A2A2A;
-      --gold:     #C8A45A;
-      --gold-dim: #7A5F2A;
-      --gold-glow:rgba(200,164,90,0.18);
-      --text:     #F5F2EA;
-      --muted:    #C8C2B8;
-      --subtle:   #6A6460;
-
-      /* !! Replace with your actual poster image URL !! */
-      --hero-poster: url('https://static.wixstatic.com/media/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png/v1/fill/w_508,h_124,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png');
+    :root{
+      --bg:#141619;
+      --paper:#1a1d21;
+      --ink:#e8e8e6;
+      --muted:#b7b7b2;
+      --muted2:#8f8f8a;
+      --gold:#c9a85a;
+      --gold2:#a8843f;
+      --line:rgba(201,168,90,.22);
+      --shadow:0 24px 72px rgba(0,0,0,.55);
+      --radius:18px;
+      --radius2:26px;
+      --max:860px;
     }
-
-    /* ── Reset ── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { font-size: 16px; -webkit-text-size-adjust: 100%; background: var(--bg); }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      line-height: 1.6;
-      min-height: 100vh;
-      /* bottom padding for fixed CTA bar */
-      padding-bottom: 88px;
-    }
-    a { color: var(--gold); text-decoration: none; }
-
-    /* ── 0. Header (Fixed) ── */
-    .header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      height: 64px;
-      z-index: 100;
-      background: rgba(17,17,17,0.82);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      border-bottom: 1px solid rgba(200,164,90,0.1);
-    }
-    .header-logo {
-      height: 22px;
-      width: auto;
-      max-width: 160px;
-      filter: brightness(0) invert(1);
-      opacity: 0.85;
-      object-fit: contain;
-    }
-
-    /* ── 1. Hero ── */
-    .hero {
-      position: relative;
-      height: 60vh;
-      min-height: 360px;
-      margin-top: 0;
-      /* Poster background — replace var(--hero-poster) with your image */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      color:var(--ink);
+      font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial;
+      letter-spacing:.18px;
       background:
-        linear-gradient(to bottom,
-          rgba(17,17,17,0.1) 0%,
-          rgba(17,17,17,0.3) 40%,
-          rgba(17,17,17,0.92) 100%),
-        var(--hero-poster) center / cover no-repeat,
-        linear-gradient(135deg, #1a1208 0%, #0d0d0d 100%);
-      display: flex;
-      align-items: flex-end;
-      padding: 0 24px 36px;
+        radial-gradient(900px 900px at 20% -10%,rgba(255,255,255,.04),transparent 55%),
+        radial-gradient(900px 900px at 85% 0%,rgba(201,168,90,.06),transparent 55%),
+        radial-gradient(1200px 900px at 50% 120%,rgba(0,0,0,.65),transparent 60%),
+        var(--bg);
     }
-    .hero-content {
-      text-align: center;
-      width: 100%;
+    a{color:inherit;text-decoration:none}
+    .container{max-width:var(--max);margin:0 auto;padding:18px 18px 110px}
+    .hairline{height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent)}
+    .micro{font-size:11px;letter-spacing:2.2px;text-transform:uppercase;color:var(--muted2)}
+    .gold-text{color:#e8d8b0}
+
+    /* Header */
+    header{
+      position:sticky;top:0;z-index:20;
+      background:rgba(20,22,25,.72);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(255,255,255,.06);
     }
-    .hero-batch {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: 0.2em;
-      color: var(--text);
-      line-height: 1;
-      margin-bottom: 6px;
+    .top{
+      max-width:var(--max);margin:0 auto;
+      padding:14px 18px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
     }
-    .hero-title {
-      font-size: 20px;
-      font-weight: 400;
-      color: var(--text);
-      letter-spacing: 0.04em;
-      margin-bottom: 10px;
+    .brand-left{display:flex;align-items:center;gap:10px;min-width:0}
+    .brand-left img{
+      height:22px;width:auto;display:block;
+      filter:brightness(0) invert(1);
+      opacity:.85;
+      object-fit:contain;
+      max-width:160px;
     }
-    .hero-sub {
-      font-size: 14px;
-      color: var(--muted);
-      letter-spacing: 0.02em;
+    .brand-fallback{font-weight:800;letter-spacing:1.4px;text-transform:uppercase;white-space:nowrap}
+    .badge{display:flex;align-items:center;gap:8px}
+    .badge .dot{width:6px;height:6px;border-radius:99px;background:var(--gold);box-shadow:0 0 0 4px rgba(201,168,90,.12)}
+
+    /* Hero */
+    .hero{
+      margin-top:18px;padding:28px 18px;
+      border-radius:var(--radius2);
+      border:1px solid rgba(255,255,255,.07);
+      background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.012));
+      box-shadow:var(--shadow);
+    }
+    .hero-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+    .hero h1{
+      margin:14px 0 8px;
+      font-size:44px;line-height:1.02;
+      letter-spacing:2px;text-transform:uppercase;font-weight:800;
+    }
+    .hero h2{
+      margin:0 0 14px;
+      font-size:14px;letter-spacing:3px;text-transform:uppercase;
+      color:var(--muted);font-weight:700;
+    }
+    .hero .tagline{margin:10px 0 0;color:var(--muted);font-size:14px;line-height:1.6;max-width:60ch}
+
+    /* Tiers */
+    .section{margin-top:22px}
+    .section-title{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      margin:18px 4px 12px;
+    }
+    .section-title .left{display:flex;align-items:center;gap:10px}
+    .pill{
+      font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);
+      border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);
+      padding:6px 10px;border-radius:999px;
+    }
+    .tiers{display:grid;gap:14px}
+    @media(min-width:760px){.tiers{grid-template-columns:1fr 1fr}}
+
+    .tier{
+      position:relative;border-radius:var(--radius);
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+      padding:16px;overflow:hidden;
+      box-shadow:0 14px 42px rgba(0,0,0,.38);
+      cursor:pointer;
+      transition:border-color .2s,box-shadow .2s;
+    }
+    .tier::before{
+      content:"";position:absolute;inset:-2px;
+      background:
+        radial-gradient(620px 260px at 15% 0%,rgba(201,168,90,.12),transparent 55%),
+        radial-gradient(520px 240px at 92% 8%,rgba(255,255,255,.05),transparent 55%);
+      opacity:.85;pointer-events:none;
+    }
+    .tier>*{position:relative}
+    .tier.selected{border-color:rgba(201,168,90,.55);box-shadow:0 24px 72px rgba(0,0,0,.55)}
+
+    .tier-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .tier-name{font-size:16px;font-weight:850;letter-spacing:.6px;text-transform:uppercase;margin:2px 0 6px}
+    .tier-sub{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2)}
+    .tier-price{text-align:right;white-space:nowrap}
+    .tier-price .ccy{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted2)}
+    .tier-price .amt{font-size:34px;font-weight:900;letter-spacing:1px;margin-top:3px}
+
+    /* Card visual */
+    .card-visual{
+      margin-top:14px;border-radius:14px;height:120px;
+      border:1px solid rgba(255,255,255,.10);
+      background:
+        linear-gradient(135deg,rgba(255,255,255,.06),rgba(255,255,255,.015) 55%,rgba(0,0,0,.18)),
+        repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0px,rgba(255,255,255,.03) 1px,transparent 1px,transparent 6px);
+      position:relative;overflow:hidden;
+    }
+    .card-visual .mark{position:absolute;left:14px;top:14px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(232,232,230,.85)}
+    .card-visual .no{position:absolute;left:14px;bottom:12px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(232,232,230,.85)}
+    .card-visual .type{position:absolute;right:14px;bottom:12px;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(232,232,230,.85)}
+    .card-visual.partner{
+      border-color:rgba(201,168,90,.30);
+      background:
+        linear-gradient(135deg,rgba(201,168,90,.12),rgba(255,255,255,.02) 52%,rgba(0,0,0,.22)),
+        repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0px,rgba(255,255,255,.025) 1px,transparent 1px,transparent 6px);
+    }
+    .card-visual.partner .type{color:rgba(201,168,90,.95)}
+    .card-visual.partner .no{color:rgba(201,168,90,.9)}
+    .card-visual.member{
+      border-color:rgba(255,255,255,.16);
+      background:
+        linear-gradient(135deg,rgba(255,255,255,.10),rgba(255,255,255,.02) 55%,rgba(0,0,0,.22)),
+        repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0px,rgba(255,255,255,.02) 1px,transparent 1px,transparent 6px);
     }
 
-    /* ── 2. Story ── */
-    .story {
-      padding: 48px 24px;
-      background: var(--bg);
+    .benefits{
+      margin-top:12px;padding-top:12px;
+      border-top:1px solid rgba(255,255,255,.08);
+      display:grid;gap:8px;
+      color:var(--muted);font-size:13px;line-height:1.5;
     }
-    .story-text {
-      font-family: 'Playfair Display', Georgia, serif;
-      font-size: 15px;
-      line-height: 1.85;
-      color: var(--text);
-      max-width: 360px;
-      margin: 0 auto;
+    .benefits .row{display:flex;align-items:flex-start;gap:10px}
+    .benefits .bullet{
+      width:18px;height:18px;border-radius:99px;
+      border:1px solid rgba(201,168,90,.35);
+      display:flex;align-items:center;justify-content:center;
+      margin-top:1px;flex:0 0 auto;
     }
-    .story-text br { display: block; content: ''; margin-top: 0; }
-    .story-para { margin-bottom: 20px; }
-    .story-para:last-child { margin-bottom: 0; }
+    .benefits .bullet i{width:6px;height:6px;border-radius:99px;background:var(--gold);display:block}
 
-    /* ── 3. Tiers ── */
-    .tiers-section {
-      padding: 8px 20px 32px;
-    }
-    .tier-card {
-      background: var(--card);
-      border: 1.5px solid var(--border);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-      position: relative;
-      cursor: pointer;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .tier-card:last-child { margin-bottom: 0; }
-    .tier-card.selected {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 1px var(--gold), 0 4px 32px var(--gold-glow);
+    .limit{
+      margin-top:12px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      color:var(--muted2);font-size:12px;letter-spacing:1px;text-transform:uppercase;
     }
 
-    /* Stamp (for 5000 card) */
-    .tier-stamp {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      overflow: hidden;
-      opacity: 0.8;
-      border: 1px solid rgba(200,164,90,0.3);
-      transform: rotate(-8deg);
-      animation: stampIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    .btn{
+      width:100%;height:46px;border-radius:14px;
+      border:1px solid rgba(201,168,90,.55);
+      background:rgba(201,168,90,.10);
+      color:var(--ink);font-weight:850;letter-spacing:2px;text-transform:uppercase;
+      cursor:pointer;
+      transition:transform .08s ease,background .18s ease,border-color .18s ease;
+      margin-top:12px;
     }
-    @keyframes stampIn {
-      from { transform: rotate(-20deg) scale(0.6); opacity: 0; }
-      to   { transform: rotate(-8deg)  scale(1);   opacity: 0.8; }
+    .btn:hover{background:rgba(201,168,90,.14)}
+    .btn:active{transform:scale(.99)}
+    .btn[disabled]{opacity:.45;cursor:not-allowed}
+
+    /* Info block */
+    .info{
+      margin-top:16px;border-radius:var(--radius);
+      border:1px solid rgba(255,255,255,.07);
+      background:rgba(255,255,255,.02);
+      padding:16px;line-height:1.75;
+      color:var(--muted);font-size:13px;
     }
-    .tier-stamp img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: brightness(0) invert(1) sepia(1) saturate(2) hue-rotate(10deg);
+    .info h3{margin:0 0 8px;font-size:12px;letter-spacing:2.4px;text-transform:uppercase;color:var(--muted2);font-weight:800}
+    .info .strong{color:var(--ink);font-weight:700}
+    .address{
+      margin-top:10px;padding-top:10px;
+      border-top:1px solid rgba(255,255,255,.08);
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      font-size:12px;color:rgba(232,232,230,.88);word-break:break-all;
     }
 
-    .tier-label {
-      font-size: 13px;
-      color: var(--muted);
-      letter-spacing: 0.04em;
-      margin-bottom: 8px;
+    /* Bottom bar */
+    .bottombar{
+      position:fixed;left:0;right:0;bottom:0;z-index:30;
+      background:rgba(20,22,25,.78);
+      backdrop-filter:blur(12px);
+      border-top:1px solid rgba(255,255,255,.10);
+      padding:12px 16px calc(12px + env(safe-area-inset-bottom));
     }
-    .tier-price-row {
-      display: flex;
-      align-items: baseline;
-      gap: 6px;
-      margin-bottom: 6px;
+    .bottombar .inner{max-width:var(--max);margin:0 auto;display:flex;align-items:center;gap:12px}
+    .summary{flex:1;min-width:0}
+    .summary .picked{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .summary .picked b{color:var(--ink)}
+    .cta{
+      width:48%;min-width:170px;height:46px;border-radius:16px;
+      border:1px solid rgba(201,168,90,.75);
+      background:linear-gradient(180deg,rgba(201,168,90,.95),rgba(168,132,63,.95));
+      color:#141619;font-weight:950;letter-spacing:2px;text-transform:uppercase;cursor:pointer;
     }
-    .tier-currency {
-      font-size: 16px;
-      color: var(--muted);
-      font-weight: 400;
-    }
-    .tier-price {
-      font-size: 40px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1;
-      letter-spacing: -0.02em;
-    }
-    .tier-discount {
-      font-size: 16px;
-      color: var(--gold);
-      font-weight: 500;
-      margin-bottom: 12px;
-    }
-    .tier-seats {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-    .seats-total {
-      font-size: 13px;
-      color: var(--subtle);
-    }
-    .seats-remaining {
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .seats-dot {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background: var(--subtle);
-    }
+    .cta[disabled]{opacity:.5;cursor:not-allowed}
 
-    /* Seat dots visual */
-    .seat-dots {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
+    /* Modal */
+    dialog{border:0;padding:0;background:transparent;width:min(var(--max),92vw)}
+    dialog::backdrop{background:rgba(0,0,0,.66)}
+    .sheet{
+      margin:12vh auto 0;border-radius:22px;overflow:hidden;
+      border:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg,rgba(26,29,33,.96),rgba(14,16,18,.96));
+      box-shadow:var(--shadow);
     }
-    .seat-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--gold);
-      opacity: 0.25;
-      transition: opacity 0.3s;
+    .sheet-header{
+      padding:16px 16px 12px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
     }
-    .seat-dot.taken { opacity: 1; }
+    .sheet-title{font-size:12px;letter-spacing:2.8px;text-transform:uppercase;color:var(--muted2);font-weight:900}
+    .sheet-sum{margin-top:8px;font-size:15px;font-weight:850;letter-spacing:.5px}
+    .close-btn{
+      appearance:none;border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);color:var(--ink);
+      border-radius:12px;padding:8px 10px;cursor:pointer;
+    }
+    .sheet-body{padding:14px 16px 16px}
+    .field{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+    .field label{font-size:11px;letter-spacing:2.2px;text-transform:uppercase;color:var(--muted2)}
+    .field .input-wrap{display:flex}
+    .field .prefix{
+      background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.10);
+      border-right:none;border-radius:14px 0 0 14px;
+      padding:0 12px;display:flex;align-items:center;
+      font-size:14px;color:var(--muted2);white-space:nowrap;
+    }
+    .input{
+      height:44px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.05);
+      color:var(--ink);padding:0 12px;outline:none;width:100%;
+      font-family:inherit;font-size:15px;
+    }
+    .input-wrap .input{border-radius:0 14px 14px 0}
+    .input:focus{border-color:rgba(201,168,90,.55);box-shadow:0 0 0 4px rgba(201,168,90,.12)}
+    .input::placeholder{color:rgba(143,143,138,.7)}
+    .check{
+      display:flex;gap:10px;align-items:flex-start;
+      color:var(--muted);font-size:12px;line-height:1.5;
+      margin-top:10px;padding:10px 12px;
+      border-radius:14px;border:1px solid rgba(255,255,255,.08);
+      background:rgba(255,255,255,.03);
+    }
+    .check input[type="checkbox"]{margin-top:2px;accent-color:var(--gold)}
+    .form-error{
+      background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.3);
+      border-radius:10px;padding:9px 13px;font-size:12px;color:#ef4444;
+      margin-top:10px;display:none;
+    }
+    .form-error.show{display:block}
+    .paybtn{
+      width:100%;height:46px;border-radius:16px;
+      border:1px solid rgba(201,168,90,.75);
+      background:linear-gradient(180deg,rgba(201,168,90,.95),rgba(168,132,63,.95));
+      color:#141619;font-weight:950;letter-spacing:2px;text-transform:uppercase;
+      cursor:pointer;margin-top:14px;font-family:inherit;
+    }
+    .paybtn[disabled]{opacity:.5;cursor:not-allowed}
 
-    /* Tier button */
-    .tier-btn {
-      width: 100%;
-      height: 48px;
-      border-radius: 24px;
-      border: none;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      letter-spacing: 0.02em;
-      transition: transform 0.15s, filter 0.15s;
-      -webkit-tap-highlight-color: transparent;
+    /* Success overlay */
+    .success-overlay{
+      display:none;position:fixed;inset:0;
+      background:var(--bg);z-index:200;
+      flex-direction:column;align-items:center;justify-content:center;
+      padding:40px 32px;text-align:center;
     }
-    .tier-btn:active { transform: scale(0.96); }
-    .tier-btn.primary {
-      background: var(--gold);
-      color: #111111;
+    .success-overlay.show{display:flex}
+    .success-logo{height:20px;width:auto;max-width:140px;filter:brightness(0) invert(1);opacity:.45;margin-bottom:48px;object-fit:contain}
+    .success-big{
+      font-size:42px;font-weight:800;letter-spacing:2px;text-transform:uppercase;
+      color:var(--ink);line-height:1.1;margin-bottom:24px;
+      animation:fadeUp .6s ease both;
     }
-    .tier-btn.primary:hover { filter: brightness(1.08); }
-    .tier-btn.secondary {
-      background: transparent;
-      color: var(--gold);
-      border: 1.5px solid var(--gold-dim);
+    .success-sub{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:8px;animation:fadeUp .6s .1s ease both}
+    .success-id{font-size:12px;color:#e8d8b0;letter-spacing:.15em;text-transform:uppercase;margin-bottom:40px;animation:fadeUp .6s .2s ease both}
+    .success-btn{
+      width:100%;max-width:280px;height:48px;border-radius:16px;
+      border:1px solid rgba(201,168,90,.75);
+      background:linear-gradient(180deg,rgba(201,168,90,.95),rgba(168,132,63,.95));
+      color:#141619;font-weight:950;letter-spacing:2px;text-transform:uppercase;
+      cursor:pointer;margin-bottom:20px;font-family:inherit;
+      animation:fadeUp .6s .3s ease both;
     }
-    .tier-btn.secondary:hover { border-color: var(--gold); }
-    .tier-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      transform: none;
-    }
+    .success-bottom{font-size:12px;color:var(--muted2);letter-spacing:.08em;animation:fadeUp .6s .4s ease both}
+    .gold-bar{width:40px;height:1px;background:var(--gold2);margin:24px auto}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-    /* ── 4. Physical card section ── */
-    .card-info {
-      padding: 48px 24px;
-      text-align: center;
-      position: relative;
+    /* Toast */
+    #toast{
+      position:fixed;bottom:90px;left:50%;
+      transform:translateX(-50%) translateY(40px);
+      background:var(--paper);border:1px solid rgba(255,255,255,.1);
+      border-radius:12px;padding:10px 18px;font-size:13px;color:var(--ink);
+      box-shadow:0 4px 20px rgba(0,0,0,.5);
+      transition:transform .25s,opacity .25s;
+      z-index:500;white-space:nowrap;opacity:0;
     }
-    .gold-line {
-      width: 100%;
-      height: 1px;
-      background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
-      margin-bottom: 40px;
-    }
-    .card-info-text {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.8;
-    }
-    .card-info-text strong {
-      color: var(--text);
-      font-weight: 500;
-    }
+    #toast.show{transform:translateX(-50%) translateY(0);opacity:1}
 
-    /* ── 5. Fixed Bottom CTA ── */
-    .bottom-cta {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      height: 72px;
-      background: var(--bg);
-      border-top: 1px solid var(--gold-dim);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 20px;
-      padding-bottom: env(safe-area-inset-bottom, 0);
-      z-index: 90;
+    @media(max-width:420px){
+      .hero h1{font-size:38px}
+      .tier-price .amt{font-size:32px}
+      .cta{min-width:150px}
     }
-    .cta-selected {
-      font-size: 13px;
-      color: var(--muted);
-      max-width: 35%;
-    }
-    .cta-selected strong {
-      display: block;
-      color: var(--text);
-      font-size: 14px;
-    }
-    .cta-btn {
-      width: 60%;
-      height: 48px;
-      border-radius: 24px;
-      background: var(--gold);
-      color: #111111;
-      border: none;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      letter-spacing: 0.02em;
-      transition: transform 0.15s, filter 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .cta-btn:active { transform: scale(0.96); }
-    .cta-btn:hover  { filter: brightness(1.08); }
-    .cta-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-    /* ── 6. Payment Bottom Sheet ── */
-    .sheet-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.72);
-      z-index: 200;
-      align-items: flex-end;
-      justify-content: center;
-    }
-    .sheet-overlay.open { display: flex; }
-    .sheet {
-      background: var(--card);
-      border-radius: 24px 24px 0 0;
-      width: 100%;
-      max-width: 520px;
-      padding: 32px 24px;
-      padding-bottom: calc(32px + env(safe-area-inset-bottom, 0));
-      animation: sheetUp 0.3s cubic-bezier(0.32,0.72,0,1) both;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    @keyframes sheetUp {
-      from { transform: translateY(100%); }
-      to   { transform: translateY(0); }
-    }
-    .sheet-handle {
-      width: 36px;
-      height: 4px;
-      background: var(--border);
-      border-radius: 2px;
-      margin: 0 auto 24px;
-    }
-    .sheet-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px;
-      color: var(--text);
-      margin-bottom: 6px;
-      text-align: center;
-    }
-    .sheet-tier-display {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-    .sheet-tier-name {
-      font-size: 13px;
-      color: var(--muted);
-    }
-    .sheet-tier-price {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--gold);
-    }
-
-    /* Form */
-    .form-group { margin-bottom: 16px; }
-    .form-label {
-      display: block;
-      font-size: 12px;
-      color: var(--subtle);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-bottom: 6px;
-    }
-    .form-input-wrap {
-      display: flex;
-      align-items: stretch;
-    }
-    .form-prefix {
-      background: var(--card2);
-      border: 1.5px solid var(--border);
-      border-right: none;
-      border-radius: 12px 0 0 12px;
-      padding: 11px 12px;
-      font-size: 14px;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    .form-input {
-      width: 100%;
-      background: var(--card2);
-      border: 1.5px solid var(--border);
-      border-radius: 12px;
-      color: var(--text);
-      font-family: inherit;
-      font-size: 15px;
-      padding: 12px 14px;
-      outline: none;
-      transition: border-color 0.2s;
-      -webkit-appearance: none;
-    }
-    .form-input-wrap .form-input {
-      border-radius: 0 12px 12px 0;
-    }
-    .form-input:focus { border-color: var(--gold); }
-    .form-input::placeholder { color: var(--subtle); }
-
-    .form-check {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      margin-top: 4px;
-    }
-    .form-check input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      min-width: 18px;
-      margin-top: 2px;
-      accent-color: var(--gold);
-      cursor: pointer;
-    }
-    .form-check label {
-      font-size: 13px;
-      color: var(--muted);
-      cursor: pointer;
-      line-height: 1.5;
-    }
-
-    .form-error {
-      background: rgba(239,68,68,0.08);
-      border: 1px solid rgba(239,68,68,0.3);
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 13px;
-      color: #ef4444;
-      margin-bottom: 14px;
-      display: none;
-    }
-    .form-error.show { display: block; }
-
-    .pay-btn {
-      width: 100%;
-      height: 52px;
-      border-radius: 24px;
-      background: var(--gold);
-      color: #111111;
-      border: none;
-      font-family: inherit;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 20px;
-      letter-spacing: 0.02em;
-      transition: transform 0.15s, filter 0.15s;
-    }
-    .pay-btn:active { transform: scale(0.96); }
-    .pay-btn:hover  { filter: brightness(1.08); }
-    .pay-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-    /* ── 7. Success Overlay ── */
-    .success-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 300;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 32px;
-      text-align: center;
-    }
-    .success-overlay.show { display: flex; }
-    .success-logo {
-      height: 20px;
-      width: auto;
-      max-width: 140px;
-      filter: brightness(0) invert(1);
-      opacity: 0.45;
-      margin-bottom: 48px;
-      object-fit: contain;
-    }
-    .success-big {
-      font-family: 'Playfair Display', serif;
-      font-size: 38px;
-      font-style: italic;
-      color: var(--text);
-      line-height: 1.15;
-      margin-bottom: 28px;
-      animation: fadeUp 0.6s ease both;
-    }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .success-sub {
-      font-size: 15px;
-      color: var(--muted);
-      line-height: 1.7;
-      margin-bottom: 8px;
-      animation: fadeUp 0.6s 0.1s ease both;
-    }
-    .success-id {
-      font-size: 13px;
-      color: var(--gold);
-      letter-spacing: 0.1em;
-      margin-bottom: 40px;
-      animation: fadeUp 0.6s 0.2s ease both;
-    }
-    .success-btn {
-      width: 100%;
-      max-width: 280px;
-      height: 52px;
-      border-radius: 24px;
-      background: var(--gold);
-      color: #111111;
-      border: none;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-bottom: 20px;
-      animation: fadeUp 0.6s 0.3s ease both;
-      letter-spacing: 0.02em;
-    }
-    .success-bottom {
-      font-size: 13px;
-      color: var(--subtle);
-      letter-spacing: 0.04em;
-      animation: fadeUp 0.6s 0.4s ease both;
-    }
-    .gold-divider {
-      width: 40px;
-      height: 1px;
-      background: var(--gold-dim);
-      margin: 28px auto;
-    }
-
-    /* ── Toast ── */
-    #toast {
-      position: fixed;
-      bottom: 90px;
-      left: 50%;
-      transform: translateX(-50%) translateY(40px);
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 18px;
-      font-size: 13px;
-      color: var(--text);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-      transition: transform 0.25s, opacity 0.25s;
-      z-index: 500;
-      white-space: nowrap;
-      opacity: 0;
-    }
-    #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-    /* ── Spacing helpers ── */
-    .spacer-64 { height: 64px; }
   </style>
 </head>
 <body>
 
-  <!-- ── Header ── -->
-  <header class="header">
-    <img
-      src="https://static.wixstatic.com/media/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png/v1/fill/w_508,h_124,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png"
-      alt="CHRONOBREWERY CO."
-      class="header-logo">
-  </header>
+<!-- Header -->
+<header>
+  <div class="top">
+    <div class="brand-left">
+      <img src="https://static.wixstatic.com/media/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png/v1/fill/w_508,h_124,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png"
+           alt="CHRONOBREWERY"
+           onerror="this.remove();document.getElementById('brandFallback').style.display='block'">
+      <div id="brandFallback" class="brand-fallback" style="display:none">CHRONOBREWERY</div>
+    </div>
+    <div class="badge">
+      <span class="dot"></span>
+      <span class="micro">BATCH 01</span>
+    </div>
+  </div>
+</header>
 
-  <!-- Spacer for fixed header -->
-  <div class="spacer-64"></div>
+<main class="container">
 
-  <!-- ── Hero ── -->
+  <!-- Hero -->
   <section class="hero">
-    <div class="hero-content">
-      <div class="hero-batch">BATCH 01</div>
-      <div class="hero-title">創始會員卡</div>
-      <div class="hero-sub">愉景灣老朋友的特別邀請</div>
+    <div class="hero-top">
+      <span class="micro">CHRONOBREWERY CO.</span>
+      <span class="micro">DISCOVERY BAY</span>
     </div>
-  </section>
-
-  <!-- ── Story ── -->
-  <section class="story">
-    <div class="story-text">
-      <p class="story-para">
-        從香港 DBBREW<br>
-        走到深圳「時光釀造所」。
-      </p>
-      <p class="story-para">
-        這一步，是你們陪著走過的。
-      </p>
-      <p class="story-para">
-        Batch 01，<br>
-        想把第一份會員身份<br>
-        留給第一批支持者。
-      </p>
-    </div>
-  </section>
-
-  <!-- ── Tiers ── -->
-  <section class="tiers-section">
-
-    <!-- 5000 Card -->
-    <div class="tier-card" id="card-5000" onclick="selectTier('black')">
-      <!-- Stamp — replace inner content with circular logo img when available -->
-      <div class="tier-stamp" style="display:flex;align-items:center;justify-content:center;background:#1A1200;flex-direction:column;gap:1px">
-        <div style="font-size:8px;letter-spacing:0.12em;color:var(--gold);font-weight:700;opacity:0.9">DB</div>
-        <div style="font-size:6px;letter-spacing:0.08em;color:var(--gold);opacity:0.7">BREW</div>
-      </div>
-
-      <div class="tier-label">創始合夥會員</div>
-      <div class="tier-price-row">
-        <span class="tier-currency">HKD</span>
-        <span class="tier-price">5,000</span>
-      </div>
-      <div class="tier-discount">永久 8 折</div>
-
-      <div class="seat-dots" id="dots-black"></div>
-
-      <div class="tier-seats">
-        <span class="seats-total">僅 5 席</span>
-        <span class="seats-dot"></span>
-        <span class="seats-remaining">剩餘 <strong id="rem-black">—</strong> / 5</span>
-      </div>
-
-      <button class="tier-btn primary" id="btn-5000" onclick="event.stopPropagation(); selectAndPay('black')">
-        選擇 5000 檔
-      </button>
-    </div>
-
-    <!-- 1000 Card -->
-    <div class="tier-card" id="card-1000" onclick="selectTier('steel')">
-      <div class="tier-label">創始會員</div>
-      <div class="tier-price-row">
-        <span class="tier-currency">HKD</span>
-        <span class="tier-price">1,000</span>
-      </div>
-      <div class="tier-discount">永久 88 折</div>
-
-      <div class="seat-dots" id="dots-steel"></div>
-
-      <div class="tier-seats">
-        <span class="seats-total">25 席</span>
-        <span class="seats-dot"></span>
-        <span class="seats-remaining">剩餘 <strong id="rem-steel">—</strong> / 25</span>
-      </div>
-
-      <button class="tier-btn secondary" id="btn-1000" onclick="event.stopPropagation(); selectAndPay('steel')">
-        選擇 1000 檔
-      </button>
-    </div>
-
-  </section>
-
-  <!-- ── Physical Card Info ── -->
-  <section class="card-info">
-    <div class="gold-line"></div>
-    <p class="card-info-text">
-      實體會員卡<br>
-      將在深圳<strong>「時光釀造所」</strong><br>
-      親自交到你手上。
+    <h1>BATCH 01</h1>
+    <h2>THE FIRST TWENTY</h2>
+    <div class="hairline"></div>
+    <p class="tagline">
+      Founding membership for our early Discovery Bay supporters.
+      Two tiers. 30 cards total. Physical card pickup in Shenzhen.
     </p>
   </section>
 
-  <!-- ── Fixed Bottom CTA ── -->
-  <div class="bottom-cta">
-    <div class="cta-selected" id="cta-label">
-      <span style="font-size:13px;color:var(--subtle)">選擇一個檔位</span>
+  <!-- Tiers -->
+  <section class="section">
+    <div class="section-title">
+      <div class="left">
+        <span class="pill">Membership Tiers</span>
+        <span class="micro">Select one</span>
+      </div>
+      <span class="micro">Remaining: <span id="totalRemaining">—</span></span>
     </div>
-    <button class="cta-btn" id="cta-btn" disabled onclick="openSheet()">
-      立即購買
-    </button>
-  </div>
 
-  <!-- ── Payment Bottom Sheet ── -->
-  <div class="sheet-overlay" id="sheet-overlay" onclick="closeSheetOutside(event)">
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <h2 class="sheet-title">確認你的創始身份</h2>
+    <div class="tiers">
 
-      <div class="sheet-tier-display">
-        <div class="sheet-tier-name" id="sheet-tier-name">—</div>
-        <div class="sheet-tier-price" id="sheet-tier-price">HKD —</div>
+      <!-- Founding Partner -->
+      <article class="tier" id="tier5000" data-tier="5000" role="button" tabindex="0">
+        <div class="tier-head">
+          <div>
+            <div class="tier-name">Founding Partner</div>
+            <div class="tier-sub">Lifetime 20% OFF</div>
+          </div>
+          <div class="tier-price">
+            <div class="ccy">HKD</div>
+            <div class="amt">5,000</div>
+          </div>
+        </div>
+        <div class="card-visual partner" aria-hidden="true">
+          <div class="mark">CHRONOBREWERY</div>
+          <div class="no">NO. FP-000X</div>
+          <div class="type">PARTNER</div>
+        </div>
+        <div class="benefits">
+          <div class="row"><span class="bullet"><i></i></span><span><b class="gold-text">Lifetime 20% OFF</b> on all eligible purchases</span></div>
+          <div class="row"><span class="bullet"><i></i></span><span><b>Priority access</b> to future batches &amp; releases</span></div>
+          <div class="row"><span class="bullet"><i></i></span><span><b>Exclusive invitations</b> to private events</span></div>
+          <div class="row"><span class="bullet"><i></i></span><span>Usable in <b>Hong Kong</b> &amp; <b>Mainland China</b></span></div>
+        </div>
+        <div class="limit">
+          <span>Limited to 5</span>
+          <span>Remaining <b id="left5000">—</b> / 5</span>
+        </div>
+        <button class="btn" type="button" id="btn5000">Select Partner</button>
+      </article>
+
+      <!-- Founding Member -->
+      <article class="tier" id="tier1000" data-tier="1000" role="button" tabindex="0">
+        <div class="tier-head">
+          <div>
+            <div class="tier-name">Founding Member</div>
+            <div class="tier-sub">Lifetime 12% OFF</div>
+          </div>
+          <div class="tier-price">
+            <div class="ccy">HKD</div>
+            <div class="amt">1,000</div>
+          </div>
+        </div>
+        <div class="card-visual member" aria-hidden="true">
+          <div class="mark">CHRONOBREWERY</div>
+          <div class="no">NO. FM-000X</div>
+          <div class="type">MEMBER</div>
+        </div>
+        <div class="benefits">
+          <div class="row"><span class="bullet"><i></i></span><span><b class="gold-text">Lifetime 12% OFF</b> on all eligible purchases</span></div>
+          <div class="row"><span class="bullet"><i></i></span><span><b>Priority purchase</b> access for future batches</span></div>
+          <div class="row"><span class="bullet"><i></i></span><span><b>Member-only events</b> (limited seats)</span></div>
+          <div class="row"><span class="bullet"><i></i></span><span>Usable in <b>Hong Kong</b> &amp; <b>Mainland China</b></span></div>
+        </div>
+        <div class="limit">
+          <span>Limited to 25</span>
+          <span>Remaining <b id="left1000">—</b> / 25</span>
+        </div>
+        <button class="btn" type="button" id="btn1000">Select Member</button>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Key Terms -->
+  <section class="section">
+    <div class="section-title">
+      <div class="left">
+        <span class="pill">Key Terms</span>
+      </div>
+    </div>
+    <div class="info">
+      <h3>Usage</h3>
+      <div>
+        <span class="strong">Hong Kong:</span> Membership discount applies directly to your bill.
+      </div>
+      <div style="margin-top:8px">
+        <span class="strong">Mainland China:</span> Purchases are converted using the <span class="strong">actual exchange rate</span> at the time of transaction.
       </div>
 
-      <div id="sheet-error" class="form-error"></div>
+      <div class="hairline" style="margin:14px 0"></div>
 
-      <div class="form-group">
-        <label class="form-label">手機號（必填）</label>
-        <div class="form-input-wrap">
-          <span class="form-prefix">+852</span>
-          <input class="form-input" type="tel" id="input-mobile" placeholder="9123 4567" maxlength="12" autocomplete="tel">
+      <h3>Physical Card Pickup</h3>
+      <div>
+        Your physical card is collected in person at our Shenzhen store.
+        We will notify you via WhatsApp once your membership is confirmed.
+      </div>
+      <div class="address">深圳市南山区南山智谷产业园F栋一层107号</div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Bottom bar -->
+<div class="bottombar">
+  <div class="inner">
+    <div class="summary">
+      <div class="picked" id="pickedText">No tier selected</div>
+    </div>
+    <button class="cta" id="ctaBtn" disabled>Proceed</button>
+  </div>
+</div>
+
+<!-- Payment modal -->
+<dialog id="payDialog">
+  <div class="sheet">
+    <div class="sheet-header">
+      <div>
+        <div class="sheet-title">Confirm Membership</div>
+        <div class="sheet-sum" id="orderSummary">—</div>
+      </div>
+      <button class="close-btn" id="closeDialog" type="button">Close</button>
+    </div>
+    <div class="sheet-body">
+      <div class="field">
+        <label>Phone (Required)</label>
+        <div class="input-wrap">
+          <span class="prefix">+852</span>
+          <input class="input" id="phone" inputmode="tel" placeholder="9123 4567" maxlength="12">
         </div>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">姓名（選填）</label>
-        <input class="form-input" type="text" id="input-name" placeholder="你的名字" maxlength="30" autocomplete="name">
+      <div class="field">
+        <label>Name (Optional)</label>
+        <input class="input" id="uname" placeholder="Your name">
       </div>
-
-      <div class="form-check">
-        <input type="checkbox" id="check-pickup">
-        <label for="check-pickup">我理解需到深圳門店領取實體卡</label>
-      </div>
-
-      <button class="pay-btn" id="pay-btn" onclick="submitPayment()">
-        確認支付 HKD —
-      </button>
+      <label class="check">
+        <input type="checkbox" id="pickupCheck">
+        <span>I understand the physical card must be collected at Chronobrewery Shenzhen.</span>
+      </label>
+      <div class="form-error" id="formError"></div>
+      <button class="paybtn" id="payBtn" type="button" disabled>Confirm Payment</button>
     </div>
   </div>
+</dialog>
 
-  <!-- ── Success Overlay ── -->
-  <div class="success-overlay" id="success-overlay">
-    <img
-      src="https://static.wixstatic.com/media/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png/v1/fill/w_508,h_124,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png"
-      alt="CHRONOBREWERY CO."
-      class="success-logo">
+<!-- Success overlay -->
+<div class="success-overlay" id="successOverlay">
+  <img src="https://static.wixstatic.com/media/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png/v1/fill/w_508,h_124,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png"
+       alt="CHRONOBREWERY" class="success-logo">
+  <div class="success-big">CONFIRMED.</div>
+  <p class="success-sub">Your position in Batch 01 is secured.</p>
+  <p class="success-id" id="successId">Membership No: ——</p>
+  <div class="gold-bar"></div>
+  <button class="success-btn" onclick="document.querySelector('.info').scrollIntoView({behavior:'smooth'});document.getElementById('successOverlay').classList.remove('show')">
+    View Pickup Details
+  </button>
+  <p class="success-bottom">We look forward to welcoming you in Shenzhen.</p>
+</div>
 
-    <div class="success-big">歡迎回家。</div>
+<div id="toast"></div>
 
-    <p class="success-sub">
-      你的 Batch 01 創始會員身份已確認。
-    </p>
-    <p class="success-id" id="success-member-id">會員編號：——</p>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ══════════════════════════════════════════
+  //  CONFIG
+  // ══════════════════════════════════════════
+  const SUPABASE_URL  = 'https://kbjndsrllqpuaedotdng.supabase.co';
+  const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtiam5kc3JsbHFwdWFlZG90ZG5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4Mjg2NDAsImV4cCI6MjA4NzQwNDY0MH0.gSdKU54sAAAdDoqEhczuj4TxmcNzghMe9WN84zLOaAY';
 
-    <div class="gold-divider"></div>
+  const STRIPE_LINKS = {
+    '5000': 'https://buy.stripe.com/8x27sK0PafxubnRfJ48Ra00',  // Replace with real HK$5,000 link
+    '1000': 'https://buy.stripe.com/8x27sK0PafxubnRfJ48Ra00',  // Replace with real HK$1,000 link
+  };
 
-    <button class="success-btn" onclick="window.location.href='#card-info'">
-      查看領卡方式
-    </button>
+  const TIERS = {
+    '5000': { title: 'Founding Partner', discount: 'Lifetime 20% OFF', price: 5000, max: 5,  prefix: 'FP' },
+    '1000': { title: 'Founding Member',  discount: 'Lifetime 12% OFF', price: 1000, max: 25, prefix: 'FM' },
+  };
+  // ══════════════════════════════════════════
 
-    <p class="success-bottom">我們在深圳等你。</p>
-  </div>
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  let selectedTier = null;
+  const inv = { '5000': 5, '1000': 25 };
 
-  <!-- Toast -->
-  <div id="toast"></div>
+  function showToast(msg, dur = 2500) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), dur);
+  }
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script>
-    // ══════════════════════════════════════════
-    //  CONFIG
-    // ══════════════════════════════════════════
-    const SUPABASE_URL  = 'https://kbjndsrllqpuaedotdng.supabase.co';
-    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtiam5kc3JsbHFwdWFlZG90ZG5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4Mjg2NDAsImV4cCI6MjA4NzQwNDY0MH0.gSdKU54sAAAdDoqEhczuj4TxmcNzghMe9WN84zLOaAY';
+  function showError(msg) {
+    const el = document.getElementById('formError');
+    if (msg) { el.textContent = msg; el.classList.add('show'); }
+    else el.classList.remove('show');
+  }
 
-    const STRIPE_LINKS = {
-      black: 'https://buy.stripe.com/8x27sK0PafxubnRfJ48Ra00',  // HK$5,000 — replace with real link
-      steel: 'https://buy.stripe.com/8x27sK0PafxubnRfJ48Ra00',  // HK$1,000 — replace with real link
-    };
+  function fmtHKD(n) {
+    return 'HKD ' + n.toLocaleString();
+  }
 
-    const TIER_CONFIG = {
-      black: { name: '創始合夥會員',  price: 'HKD 5,000', max: 5  },
-      steel: { name: '創始會員',      price: 'HKD 1,000', max: 25 },
-    };
-    // ══════════════════════════════════════════
+  // Load inventory from Supabase
+  async function loadInventory() {
+    const { data } = await sb
+      .from('members')
+      .select('tier')
+      .neq('status', 'refunded');
 
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-    let selectedTier = null;
-
-    function showToast(msg, dur = 2500) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
-      setTimeout(() => t.classList.remove('show'), dur);
+    if (data) {
+      const taken5000 = data.filter(m => m.tier === 'black').length;
+      const taken1000 = data.filter(m => m.tier === 'steel').length;
+      inv['5000'] = Math.max(0, 5 - taken5000);
+      inv['1000'] = Math.max(0, 25 - taken1000);
     }
 
-    function showError(id, msg) {
-      const el = document.getElementById(id);
-      if (msg) { el.textContent = msg; el.classList.add('show'); }
-      else el.classList.remove('show');
+    document.getElementById('left5000').textContent = inv['5000'];
+    document.getElementById('left1000').textContent = inv['1000'];
+    document.getElementById('totalRemaining').textContent = inv['5000'] + inv['1000'];
+
+    if (inv['5000'] <= 0) {
+      document.getElementById('btn5000').disabled = true;
+      document.getElementById('btn5000').textContent = 'Sold Out';
     }
-
-    // ── Load seat counts ──
-    async function loadSeats() {
-      const { data } = await sb
-        .from('members')
-        .select('tier')
-        .neq('status', 'refunded');
-
-      if (!data) return;
-
-      const blackTaken = data.filter(m => m.tier === 'black').length;
-      const steelTaken = data.filter(m => m.tier === 'steel').length;
-
-      const remBlack = Math.max(0, 5  - blackTaken);
-      const remSteel = Math.max(0, 25 - steelTaken);
-
-      document.getElementById('rem-black').textContent = remBlack;
-      document.getElementById('rem-steel').textContent = remSteel;
-
-      // Seat dots — black (5 dots)
-      renderDots('dots-black', 5,  blackTaken);
-      renderDots('dots-steel', 25, steelTaken);
-
-      // Disable sold-out buttons
-      if (remBlack === 0) document.getElementById('btn-5000').disabled = true;
-      if (remSteel === 0) document.getElementById('btn-1000').disabled = true;
+    if (inv['1000'] <= 0) {
+      document.getElementById('btn1000').disabled = true;
+      document.getElementById('btn1000').textContent = 'Sold Out';
     }
+  }
 
-    function renderDots(containerId, total, taken) {
-      const el = document.getElementById(containerId);
-      el.innerHTML = '';
-      for (let i = 0; i < total; i++) {
-        const dot = document.createElement('div');
-        dot.className = 'seat-dot' + (i < taken ? ' taken' : '');
-        el.appendChild(dot);
-      }
-    }
+  function setSelected(tier) {
+    if (inv[tier] <= 0) return;
+    selectedTier = tier;
 
-    // ── Tier selection ──
-    function selectTier(tier) {
-      selectedTier = tier;
-      document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('selected'));
-      document.getElementById(tier === 'black' ? 'card-5000' : 'card-1000').classList.add('selected');
+    document.getElementById('tier5000').classList.toggle('selected', tier === '5000');
+    document.getElementById('tier1000').classList.toggle('selected', tier === '1000');
 
-      const cfg = TIER_CONFIG[tier];
-      const ctaLabel = document.getElementById('cta-label');
-      ctaLabel.innerHTML = `<span style="font-size:12px;color:var(--subtle)">已選</span><strong>${cfg.name}</strong>`;
-      document.getElementById('cta-btn').disabled = false;
-    }
+    const t = TIERS[tier];
+    document.getElementById('pickedText').innerHTML =
+      `Selected: <b>${t.title}</b> · ${t.discount} · ${fmtHKD(t.price)}`;
+    document.getElementById('ctaBtn').disabled = false;
+  }
 
-    function selectAndPay(tier) {
-      selectTier(tier);
-      openSheet();
-    }
+  function openModal() {
+    if (!selectedTier) return;
+    const t = TIERS[selectedTier];
+    document.getElementById('orderSummary').textContent =
+      `${t.title} · ${t.discount} · ${fmtHKD(t.price)}`;
+    document.getElementById('payBtn').textContent = `Confirm Payment ${fmtHKD(t.price)}`;
+    document.getElementById('phone').value = '';
+    document.getElementById('uname').value = '';
+    document.getElementById('pickupCheck').checked = false;
+    document.getElementById('payBtn').disabled = true;
+    showError('');
+    document.getElementById('payDialog').showModal();
+    setTimeout(() => document.getElementById('phone').focus(), 300);
+  }
 
-    // ── Bottom sheet ──
-    function openSheet() {
-      if (!selectedTier) return;
-      const cfg = TIER_CONFIG[selectedTier];
-      document.getElementById('sheet-tier-name').textContent  = cfg.name;
-      document.getElementById('sheet-tier-price').textContent = cfg.price;
-      document.getElementById('pay-btn').textContent = `確認支付 ${cfg.price}`;
-      showError('sheet-error', '');
-      document.getElementById('sheet-overlay').classList.add('open');
-      setTimeout(() => document.getElementById('input-mobile').focus(), 350);
-    }
+  function validateForm() {
+    const phone = document.getElementById('phone').value.trim().replace(/\s/g, '');
+    const agreed = document.getElementById('pickupCheck').checked;
+    document.getElementById('payBtn').disabled = !(phone.length >= 8 && agreed);
+  }
 
-    function closeSheet() {
-      document.getElementById('sheet-overlay').classList.remove('open');
-    }
+  async function submitPayment() {
+    const phone  = document.getElementById('phone').value.trim().replace(/\s/g, '');
+    const name   = document.getElementById('uname').value.trim();
+    const agreed = document.getElementById('pickupCheck').checked;
 
-    function closeSheetOutside(e) {
-      if (e.target === document.getElementById('sheet-overlay')) closeSheet();
-    }
+    showError('');
+    if (!phone || phone.length < 8) return showError('Please enter a valid phone number.');
+    if (!agreed) return showError('Please confirm card pickup terms.');
 
-    // ── Submit payment ──
-    async function submitPayment() {
-      const mobile  = document.getElementById('input-mobile').value.trim().replace(/\s/g,'');
-      const name    = document.getElementById('input-name').value.trim();
-      const checked = document.getElementById('check-pickup').checked;
+    const btn = document.getElementById('payBtn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
 
-      showError('sheet-error', '');
+    const tierKey = selectedTier === '5000' ? 'black' : 'steel';
 
-      if (!mobile || mobile.length < 8)
-        return showError('sheet-error', '請輸入有效的手機號碼');
-      if (!checked)
-        return showError('sheet-error', '請確認了解需到深圳門店領取實體卡');
+    const { data, error } = await sb.from('members').insert({
+      name:   name || null,
+      mobile: '+852' + phone,
+      tier:   tierKey,
+      status: 'pending',
+    }).select('id').single();
 
-      const btn = document.getElementById('pay-btn');
-      btn.disabled = true;
-      btn.textContent = '處理中…';
+    if (error) console.warn('DB error (proceeding anyway):', error);
 
-      // Save to Supabase
-      const { data, error } = await sb.from('members').insert({
-        name:   name || null,
-        mobile: '+852' + mobile,
-        tier:   selectedTier,
-        status: 'pending',
-        email:  null,
-      }).select('id').single();
+    localStorage.setItem('sg_batch01', JSON.stringify({
+      id:     data?.id,
+      tier:   selectedTier,
+      name,
+      mobile: '+852' + phone,
+    }));
 
-      btn.disabled = false;
-      btn.textContent = `確認支付 ${TIER_CONFIG[selectedTier].price}`;
+    window.location.href = STRIPE_LINKS[selectedTier];
+  }
 
-      if (error) {
-        console.warn('DB write failed, proceeding to payment anyway:', error);
-      }
+  function checkSuccess() {
+    const params = new URLSearchParams(location.search);
+    if (!params.get('success')) return;
+    const saved = JSON.parse(localStorage.getItem('sg_batch01') || 'null');
+    if (!saved) return;
 
-      // Save locally
-      localStorage.setItem('sg_batch01', JSON.stringify({
-        id:     data?.id,
-        tier:   selectedTier,
-        name:   name || null,
-        mobile: '+852' + mobile,
-      }));
+    const t = TIERS[saved.tier] || TIERS['1000'];
+    const seq = String(Math.floor(Math.random() * (t.prefix === 'FP' ? 5 : 25)) + 1).padStart(3, '0');
+    document.getElementById('successId').textContent = `Membership No: ${t.prefix}-${seq}`;
+    document.getElementById('successOverlay').classList.add('show');
+    localStorage.removeItem('sg_batch01');
+  }
 
-      // Redirect to Stripe
-      const base = STRIPE_LINKS[selectedTier];
-      window.location.href = base;
-    }
+  // Events
+  document.getElementById('btn5000').addEventListener('click', e => { e.stopPropagation(); setSelected('5000'); });
+  document.getElementById('btn1000').addEventListener('click', e => { e.stopPropagation(); setSelected('1000'); });
+  document.getElementById('tier5000').addEventListener('click', () => setSelected('5000'));
+  document.getElementById('tier1000').addEventListener('click', () => setSelected('1000'));
+  document.getElementById('ctaBtn').addEventListener('click', openModal);
+  document.getElementById('closeDialog').addEventListener('click', () => document.getElementById('payDialog').close());
+  document.getElementById('phone').addEventListener('input', validateForm);
+  document.getElementById('pickupCheck').addEventListener('change', validateForm);
+  document.getElementById('payBtn').addEventListener('click', submitPayment);
 
-    // ── Check success on return from Stripe ──
-    function checkSuccess() {
-      const params = new URLSearchParams(location.search);
-      if (!params.get('success')) return;
+  [document.getElementById('tier5000'), document.getElementById('tier1000')].forEach(el => {
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+    });
+  });
 
-      const saved = JSON.parse(localStorage.getItem('sg_batch01') || 'null');
-      if (!saved) return;
-
-      // Generate member ID from tier
-      const prefix = saved.tier === 'black' ? 'B' : 'S';
-      const rand   = String(Math.floor(Math.random() * 999) + 1).padStart(3, '0');
-      document.getElementById('success-member-id').textContent = `會員編號：${prefix}${rand}`;
-
-      document.getElementById('success-overlay').classList.add('show');
-      localStorage.removeItem('sg_batch01');
-    }
-
-    // ── Init ──
-    loadSeats();
-    checkSuccess();
-  </script>
+  loadInventory();
+  checkSuccess();
+</script>
 </body>
 </html>
