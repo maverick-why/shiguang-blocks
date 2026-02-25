@@ -108,7 +108,8 @@
       transition:border-color .2s,box-shadow .2s;
       display:flex;flex-direction:column;
     }
-    .tier .btn{margin-top:auto}
+    .tier-footer{margin-top:auto}
+    .tier-footer .limit{margin-top:0;padding-top:0;padding-bottom:6px}
     .tier.selected{border-color:rgba(201,168,90,.55);box-shadow:0 24px 72px rgba(0,0,0,.55)}
 
     .tier-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
@@ -162,9 +163,9 @@
     .benefits .bullet i{width:6px;height:6px;border-radius:99px;background:var(--gold);display:block}
 
     .limit{
-      margin-top:12px;
-      display:flex;align-items:center;justify-content:space-between;gap:10px;
-      color:var(--muted2);font-size:12px;letter-spacing:1px;text-transform:uppercase;
+      margin-top:auto;padding-top:10px;
+      display:flex;justify-content:flex-end;
+      color:var(--muted2);font-size:11px;letter-spacing:1px;text-transform:uppercase;
     }
 
     .btn{
@@ -396,10 +397,12 @@
           <div class="row"><span class="bullet"><i></i></span><span><b>Priority access</b> to new taps, collabs &amp; limited releases</span></div>
           <div class="row"><span class="bullet"><i></i></span><span><b>Closed-door founder events</b> — dinners, tastings, previews</span></div>
         </div>
-        <div class="limit">
-          <span>Remaining <b id="left5000">—</b> / 5</span>
+        <div class="tier-footer">
+          <div class="limit">
+            <span>Remaining <b id="left5000">—</b> / 5</span>
+          </div>
+          <button class="btn" type="button" id="btn5000">Select Partner</button>
         </div>
-        <button class="btn" type="button" id="btn5000">Select Partner</button>
       </article>
 
       <!-- Founding Member -->
@@ -423,10 +426,12 @@
           <div class="row"><span class="bullet"><i></i></span><span><b>Member access</b> to new releases &amp; tap previews</span></div>
           <div class="row"><span class="bullet"><i></i></span><span><b>Member nights</b> &amp; private tastings</span></div>
         </div>
-        <div class="limit">
-          <span>Remaining <b id="left1000">—</b> / 25</span>
+        <div class="tier-footer">
+          <div class="limit">
+            <span>Remaining <b id="left1000">—</b> / 25</span>
+          </div>
+          <button class="btn" type="button" id="btn1000">Select Member</button>
         </div>
-        <button class="btn" type="button" id="btn1000">Select Member</button>
       </article>
 
     </div>
@@ -570,8 +575,8 @@
     }
 
     // Show remaining count only when > 0; hide row entirely when sold out
-    const el5000 = document.querySelector('#tier5000 .limit');
-    const el1000 = document.querySelector('#tier1000 .limit');
+    const el5000 = document.querySelector('#tier5000 .tier-footer');
+    const el1000 = document.querySelector('#tier1000 .tier-footer');
     if (inv['5000'] > 0) {
       document.getElementById('left5000').textContent = inv['5000'];
       el5000.style.display = '';
