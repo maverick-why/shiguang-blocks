@@ -624,29 +624,23 @@
     document.getElementById('payBtn').disabled = !agreed;
   }
 
-  async function submitPayment() {
+  function submitPayment() {
     const name   = document.getElementById('uname').value.trim();
     const agreed = document.getElementById('pickupCheck').checked;
 
     showError('');
     if (!agreed) return showError('Please confirm card pickup terms.');
 
-    const btn = document.getElementById('payBtn');
-    btn.disabled = true;
-    btn.textContent = 'Saving…';
-
     const tierKey = selectedTier === '5000' ? 'black' : 'steel';
 
-    const { data, error } = await sb.from('members').insert({
+    // Save to DB in background — don't block redirect
+    sb.from('members').insert({
       name:   name || null,
       tier:   tierKey,
       status: 'pending',
-    }).select('id').single();
-
-    if (error) console.warn('DB error (proceeding anyway):', error);
+    }).then(({ error }) => { if (error) console.warn('DB:', error); });
 
     localStorage.setItem('sg_batch01', JSON.stringify({
-      id:   data?.id,
       tier: selectedTier,
       name,
     }));
