@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Certificate · Shiguang Brewing Co.</title>
+  <title>Certificate · CHRONOBREWERY CO.</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
@@ -43,7 +43,7 @@
   <div class="page-wrap">
 
     <header class="site-header" style="padding:20px 0 20px;text-align:center">
-      <img src="https://static.wixstatic.com/media/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png/v1/fill/w_508,h_124,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png" alt="Shiguang Brewing Co." class="site-logo-img">
+      <img src="https://static.wixstatic.com/media/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png/v1/fill/w_508,h_124,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/57bd3c_ad75f315ecb949da8e55de1759ec52e3~mv2.png" alt="CHRONOBREWERY CO." class="site-logo-img">
     </header>
 
     <!-- Auth form (shown if no URL params) -->
@@ -73,7 +73,7 @@
     <div id="cert-section" style="display:none">
       <div class="success-icon">🎉</div>
       <h2 style="text-align:center;margin-bottom:4px">Congratulations!</h2>
-      <p class="subtitle text-center">You're now a Founding Member of Shiguang Brewing Co.</p>
+      <p class="subtitle text-center">You're now a Founding Member of CHRONOBREWERY CO.</p>
 
       <div class="cert-wrap">
         <canvas id="cert-canvas" width="720" height="480"></canvas>
@@ -194,7 +194,7 @@
       ctx.font = 'bold 16px Inter, sans-serif';
       ctx.textAlign = 'center';
       ctx.letterSpacing = '0.12em';
-      ctx.fillText('SHIGUANG BREWING CO.', W/2, 78);
+      ctx.fillText('CHRONOBREWERY CO.', W/2, 78);
 
       ctx.fillStyle = 'rgba(192,152,32,0.6)';
       ctx.font = '13px Inter, sans-serif';
@@ -324,7 +324,7 @@
       const canvas = document.getElementById('cert-canvas');
       const num = canvas.dataset.number || '---';
       const text = encodeURIComponent(
-        `I just claimed Block #${num} at Shiguang Brewing Co. in Shenzhen! 🍺\n\n` +
+        `I just claimed Block #${num} at CHRONOBREWERY CO. in Shenzhen! 🍺\n\n` +
         `Own yours: https://shiguangbrewing.com/blocks`
       );
       window.open(`https://wa.me/?text=${text}`, '_blank');
