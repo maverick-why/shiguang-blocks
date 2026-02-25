@@ -579,22 +579,28 @@
       inv['1000'] = Math.max(0, 25 - taken1000);
     }
 
-    document.getElementById('left5000').textContent = inv['5000'];
-    document.getElementById('left1000').textContent = inv['1000'];
-    document.getElementById('totalRemaining').textContent = inv['5000'] + inv['1000'];
-
-    if (inv['5000'] <= 0) {
-      document.getElementById('btn5000').disabled = true;
-      document.getElementById('btn5000').textContent = 'Sold Out';
+    // Show remaining count only when > 0; hide row entirely when sold out
+    const el5000 = document.querySelector('#tier5000 .limit');
+    const el1000 = document.querySelector('#tier1000 .limit');
+    if (inv['5000'] > 0) {
+      document.getElementById('left5000').textContent = inv['5000'];
+      el5000.style.display = '';
+    } else {
+      el5000.style.display = 'none';
     }
-    if (inv['1000'] <= 0) {
-      document.getElementById('btn1000').disabled = true;
-      document.getElementById('btn1000').textContent = 'Sold Out';
+    if (inv['1000'] > 0) {
+      document.getElementById('left1000').textContent = inv['1000'];
+      el1000.style.display = '';
+    } else {
+      el1000.style.display = 'none';
     }
+    const totalLeft = inv['5000'] + inv['1000'];
+    const totalEl = document.getElementById('totalRemaining');
+    totalEl.parentElement.style.display = totalLeft > 0 ? '' : 'none';
+    if (totalLeft > 0) totalEl.textContent = totalLeft;
   }
 
   function setSelected(tier) {
-    if (inv[tier] <= 0) return;
     selectedTier = tier;
 
     document.getElementById('tier5000').classList.toggle('selected', tier === '5000');
