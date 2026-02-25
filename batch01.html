@@ -496,15 +496,8 @@
     </div>
     <div class="sheet-body">
       <div class="field">
-        <label>Phone (Required)</label>
-        <div class="input-wrap">
-          <span class="prefix">+852</span>
-          <input class="input" id="phone" inputmode="tel" placeholder="9123 4567" maxlength="12">
-        </div>
-      </div>
-      <div class="field">
         <label>Name (Optional)</label>
-        <input class="input" id="uname" placeholder="Your name">
+        <input class="input" id="uname" placeholder="Your name — for the card">
       </div>
       <label class="check">
         <input type="checkbox" id="pickupCheck">
@@ -625,22 +618,19 @@
     document.getElementById('payBtn').disabled = true;
     showError('');
     document.getElementById('payDialog').showModal();
-    setTimeout(() => document.getElementById('phone').focus(), 300);
+    setTimeout(() => document.getElementById('uname').focus(), 300);
   }
 
   function validateForm() {
-    const phone = document.getElementById('phone').value.trim().replace(/\s/g, '');
     const agreed = document.getElementById('pickupCheck').checked;
-    document.getElementById('payBtn').disabled = !(phone.length >= 8 && agreed);
+    document.getElementById('payBtn').disabled = !agreed;
   }
 
   async function submitPayment() {
-    const phone  = document.getElementById('phone').value.trim().replace(/\s/g, '');
     const name   = document.getElementById('uname').value.trim();
     const agreed = document.getElementById('pickupCheck').checked;
 
     showError('');
-    if (!phone || phone.length < 8) return showError('Please enter a valid phone number.');
     if (!agreed) return showError('Please confirm card pickup terms.');
 
     const btn = document.getElementById('payBtn');
@@ -651,7 +641,6 @@
 
     const { data, error } = await sb.from('members').insert({
       name:   name || null,
-      mobile: '+852' + phone,
       tier:   tierKey,
       status: 'pending',
     }).select('id').single();
@@ -659,10 +648,9 @@
     if (error) console.warn('DB error (proceeding anyway):', error);
 
     localStorage.setItem('sg_batch01', JSON.stringify({
-      id:     data?.id,
-      tier:   selectedTier,
+      id:   data?.id,
+      tier: selectedTier,
       name,
-      mobile: '+852' + phone,
     }));
 
     window.location.href = STRIPE_LINKS[selectedTier];
@@ -688,7 +676,6 @@
   document.getElementById('tier1000').addEventListener('click', () => setSelected('1000'));
   document.getElementById('ctaBtn').addEventListener('click', openModal);
   document.getElementById('closeDialog').addEventListener('click', () => document.getElementById('payDialog').close());
-  document.getElementById('phone').addEventListener('input', validateForm);
   document.getElementById('pickupCheck').addEventListener('change', validateForm);
   document.getElementById('payBtn').addEventListener('click', submitPayment);
 
