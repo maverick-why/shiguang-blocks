@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate · Shiguang Brewing Co.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .page-wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+    .cert-wrap {
+      margin: 0 auto 24px;
+      max-width: 360px;
+    }
+    canvas#cert-canvas {
+      display: block;
+      width: 100%;
+      border-radius: var(--radius);
+      box-shadow: 0 8px 40px rgba(240,192,64,0.15);
+    }
+    .share-note {
+      font-size: 0.78rem;
+      color: var(--subtle);
+      text-align: center;
+      margin-top: 10px;
+    }
+    .auth-form {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrap">
+
+    <header class="site-header" style="padding:20px 0 20px;text-align:center">
+      <div class="site-logo">⬡</div>
+      <h1>Shiguang Brewing Co.</h1>
+      <p class="tagline">時光釀造所</p>
+    </header>
+
+    <!-- Auth form (shown if no URL params) -->
+    <div id="auth-section" style="display:none">
+      <h2 style="text-align:center;margin-bottom:6px">Your Certificate</h2>
+      <p class="subtitle text-center">Enter your details to view your certificate.</p>
+      <div class="auth-form">
+        <div class="form-group">
+          <label>Block Number</label>
+          <input type="number" id="auth-number" placeholder="e.g. 42" min="1" max="100">
+        </div>
+        <div class="form-group">
+          <label>Mobile (+852)</label>
+          <div class="input-with-prefix">
+            <span class="input-prefix">+852</span>
+            <input type="tel" id="auth-mobile" placeholder="9123 4567">
+          </div>
+        </div>
+        <div id="auth-error" class="form-error"></div>
+        <div class="btn-row" style="margin-top:16px">
+          <button class="btn btn-primary" id="btn-auth">View Certificate</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certificate section -->
+    <div id="cert-section" style="display:none">
+      <div class="success-icon">🎉</div>
+      <h2 style="text-align:center;margin-bottom:4px">Congratulations!</h2>
+      <p class="subtitle text-center">You're now a Founding Member of Shiguang Brewing Co.</p>
+
+      <div class="cert-wrap">
+        <canvas id="cert-canvas" width="720" height="480"></canvas>
+        <p class="share-note">Long-press to save · or use buttons below</p>
+      </div>
+
+      <div class="share-row">
+        <button class="btn btn-primary btn-sm" id="btn-download" style="width:100%">
+          ⬇ Save Certificate
+        </button>
+        <button class="btn btn-ghost btn-sm" id="btn-whatsapp" style="width:100%">
+          💬 Share via WhatsApp
+        </button>
+      </div>
+
+      <div style="margin-top:16px">
+        <a href="" id="link-mine" class="btn btn-secondary">View My Block Status →</a>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading-section" class="loading">
+      <div class="spinner"></div>
+      Loading…
+    </div>
+
+    <!-- Error -->
+    <div id="error-section" style="display:none;text-align:center;padding:40px 0">
+      <div style="font-size:2.5rem;margin-bottom:12px">🔍</div>
+      <h3 id="error-msg">Block not found</h3>
+      <p class="text-sm text-muted" style="margin-top:6px">Check your block number and mobile, or</p>
+      <div style="margin-top:16px">
+        <a href="lookup.html" class="btn btn-secondary">Try Lookup</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ── CONFIG ──
+    const SUPABASE_URL  = 'https://kbjndsrllqpuaedotdng.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtiam5kc3JsbHFwdWFlZG90ZG5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4Mjg2NDAsImV4cCI6MjA4NzQwNDY0MH0.gSdKU54sAAAdDoqEhczuj4TxmcNzghMe9WN84zLOaAY';
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    function showToast(msg, dur = 2500) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), dur);
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      if (msg) { el.textContent = msg; el.classList.add('show'); }
+      else el.classList.remove('show');
+    }
+
+    function setSection(id) {
+      ['auth-section','cert-section','loading-section','error-section'].forEach(s => {
+        document.getElementById(s).style.display = s === id ? '' : 'none';
+      });
+    }
+
+    // ── Draw certificate on Canvas ──
+    function drawCertificate(block) {
+      const canvas = document.getElementById('cert-canvas');
+      const ctx    = canvas.getContext('2d');
+      const W = canvas.width, H = canvas.height;
+
+      // Background
+      ctx.fillStyle = '#0d0d1f';
+      ctx.fillRect(0, 0, W, H);
+
+      // Border frame
+      const inset = 18;
+      ctx.strokeStyle = '#c09820';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(inset, inset, W - inset*2, H - inset*2);
+
+      // Inner border
+      const inset2 = 24;
+      ctx.strokeStyle = 'rgba(192,152,32,0.3)';
+      ctx.lineWidth = 0.5;
+      ctx.strokeRect(inset2, inset2, W - inset2*2, H - inset2*2);
+
+      // Corner accents
+      const cSize = 16;
+      ctx.strokeStyle = '#f0c040';
+      ctx.lineWidth = 1.5;
+      [[inset, inset], [W-inset, inset], [inset, H-inset], [W-inset, H-inset]].forEach(([cx, cy]) => {
+        const dx = cx === inset ? 1 : -1;
+        const dy = cy === inset ? 1 : -1;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy + dy*cSize);
+        ctx.lineTo(cx, cy);
+        ctx.lineTo(cx + dx*cSize, cy);
+        ctx.stroke();
+      });
+
+      // Subtle diagonal grid pattern (optional)
+      ctx.globalAlpha = 0.03;
+      ctx.strokeStyle = '#f0c040';
+      ctx.lineWidth = 0.5;
+      for (let x = 0; x < W; x += 30) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+      }
+      for (let y = 0; y < H; y += 30) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+
+      // Brand name
+      ctx.fillStyle = '#c09820';
+      ctx.font = 'bold 16px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.letterSpacing = '0.12em';
+      ctx.fillText('SHIGUANG BREWING CO.', W/2, 78);
+
+      ctx.fillStyle = 'rgba(192,152,32,0.6)';
+      ctx.font = '13px Inter, sans-serif';
+      ctx.fillText('時光釀造所  ·  Shenzhen', W/2, 100);
+
+      // Divider line
+      ctx.strokeStyle = 'rgba(192,152,32,0.35)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(W/2 - 100, 118);
+      ctx.lineTo(W/2 + 100, 118);
+      ctx.stroke();
+
+      // FOUNDING MEMBER
+      ctx.fillStyle = 'rgba(240,192,64,0.55)';
+      ctx.font = '500 11px Inter, sans-serif';
+      ctx.letterSpacing = '0.18em';
+      ctx.fillText('FOUNDING MEMBER', W/2, 148);
+
+      // Block number
+      ctx.fillStyle = '#f0c040';
+      ctx.font = 'bold 88px Inter, sans-serif';
+      ctx.letterSpacing = '0.02em';
+      const num = '#' + String(block.number).padStart(3, '0');
+      ctx.fillText(num, W/2, 255);
+
+      // Name
+      ctx.fillStyle = '#e8e8f0';
+      ctx.font = '600 20px Inter, sans-serif';
+      ctx.letterSpacing = '0.01em';
+      const displayName = block.public && block.name ? block.name : 'Anonymous';
+      ctx.fillText(displayName, W/2, 300);
+
+      // Message
+      if (block.public && block.message) {
+        ctx.fillStyle = 'rgba(232,232,240,0.6)';
+        ctx.font = '14px Inter, sans-serif';
+        ctx.letterSpacing = '0';
+        const msg = `"${block.message}"`;
+        // Truncate if needed
+        const maxW = W - 100;
+        let displayMsg = msg;
+        while (ctx.measureText(displayMsg).width > maxW && displayMsg.length > 4) {
+          displayMsg = displayMsg.slice(0, -2) + '…"';
+        }
+        ctx.fillText(displayMsg, W/2, 328);
+      }
+
+      // Bottom divider
+      ctx.strokeStyle = 'rgba(192,152,32,0.35)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(W/2 - 100, 358);
+      ctx.lineTo(W/2 + 100, 358);
+      ctx.stroke();
+
+      // Location & date
+      ctx.fillStyle = 'rgba(192,152,32,0.7)';
+      ctx.font = '12px Inter, sans-serif';
+      ctx.letterSpacing = '0.1em';
+      const installDate = block.batch || 'Mar 30, 2026';
+      ctx.fillText(`SHENZHEN  ·  ${installDate.toUpperCase()}`, W/2, 382);
+
+      // Certificate of ownership
+      ctx.fillStyle = 'rgba(232,232,240,0.3)';
+      ctx.font = '10px Inter, sans-serif';
+      ctx.letterSpacing = '0.14em';
+      ctx.fillText('CERTIFICATE OF OWNERSHIP', W/2, 402);
+
+      // Serial
+      ctx.fillStyle = 'rgba(232,232,240,0.2)';
+      ctx.font = '9px Inter, sans-serif';
+      ctx.letterSpacing = '0';
+      ctx.fillText(`shiguangbrewing.com  ·  Block ${num} of 100`, W/2, 452);
+    }
+
+    // ── Load block and show cert ──
+    async function loadBlock(number, mobile) {
+      setSection('loading-section');
+
+      const { data, error } = await sb
+        .from('blocks')
+        .select('number, name, message, public, status, payment_status, batch')
+        .eq('number', number)
+        .eq('mobile', mobile)
+        .single();
+
+      if (error || !data) {
+        document.getElementById('error-msg').textContent =
+          'Block not found. Check your number and mobile.';
+        setSection('error-section');
+        return;
+      }
+
+      if (data.payment_status !== 'paid') {
+        document.getElementById('error-msg').textContent =
+          'Payment not yet confirmed. Check back soon!';
+        setSection('error-section');
+        return;
+      }
+
+      setSection('cert-section');
+
+      setTimeout(() => {
+        drawCertificate(data);
+
+        const num = String(number).padStart(3, '0');
+        const mobileEncoded = encodeURIComponent(mobile);
+        document.getElementById('link-mine').href =
+          `mine.html?number=${num}&mobile=${mobileEncoded}`;
+      }, 100);
+    }
+
+    // ── Download cert ──
+    document.getElementById('btn-download').addEventListener('click', () => {
+      const canvas = document.getElementById('cert-canvas');
+      const link = document.createElement('a');
+      const num = canvas.dataset.number || '---';
+      link.download = `shiguang-block-${num}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('Certificate saved!');
+    });
+
+    // ── WhatsApp share ──
+    document.getElementById('btn-whatsapp').addEventListener('click', () => {
+      const canvas = document.getElementById('cert-canvas');
+      const num = canvas.dataset.number || '---';
+      const text = encodeURIComponent(
+        `I just claimed Block #${num} at Shiguang Brewing Co. in Shenzhen! 🍺\n\n` +
+        `Own yours: https://shiguangbrewing.com/blocks`
+      );
+      window.open(`https://wa.me/?text=${text}`, '_blank');
+    });
+
+    // ── Auth form (manual input) ──
+    document.getElementById('btn-auth').addEventListener('click', async () => {
+      const number = parseInt(document.getElementById('auth-number').value);
+      const mobile = '+852' + document.getElementById('auth-mobile').value.trim().replace(/\s/g,'');
+      showError('auth-error', '');
+      if (!number || number < 1 || number > 100) return showError('auth-error', 'Enter a valid block number (1–100).');
+      if (!mobile || mobile.length < 12) return showError('auth-error', 'Enter a valid +852 mobile number.');
+      await loadBlock(number, mobile);
+    });
+
+    // ── Init: read URL params ──
+    (async () => {
+      const params = new URLSearchParams(location.search);
+      const numParam = params.get('number');
+      const mobParam = params.get('mobile');
+
+      // Also check localStorage
+      let savedMobile = mobParam;
+      if (!savedMobile) {
+        const saved = JSON.parse(localStorage.getItem('sg_block') || 'null');
+        if (saved && saved.number == parseInt(numParam)) {
+          savedMobile = saved.mobile;
+        }
+      }
+
+      if (numParam && savedMobile) {
+        const num = parseInt(numParam);
+        await loadBlock(num, savedMobile);
+        // Store number on canvas for download
+        document.getElementById('cert-canvas').dataset.number = String(num).padStart(3, '0');
+      } else if (numParam && !savedMobile) {
+        // Show auth form pre-filled
+        setSection('auth-section');
+        document.getElementById('auth-number').value = parseInt(numParam);
+      } else {
+        setSection('auth-section');
+      }
+    })();
+  </script>
+</body>
+</html>

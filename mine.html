@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Block · Shiguang Brewing Co.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .page-wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+    .mini-wall-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrap">
+
+    <header class="site-header" style="padding:20px 0 16px">
+      <div class="site-logo">⬡</div>
+      <h1>Shiguang Brewing Co.</h1>
+      <p class="tagline">時光釀造所</p>
+    </header>
+
+    <!-- Loading -->
+    <div id="loading-section" class="loading">
+      <div class="spinner"></div>
+      Loading your block…
+    </div>
+
+    <!-- Main content -->
+    <div id="main-section" style="display:none">
+
+      <!-- Number big -->
+      <div class="block-number-display">
+        <div class="block-num-big" id="block-num-display">—</div>
+        <div class="block-position" id="block-pos-display">Row — · Col —</div>
+      </div>
+
+      <!-- Status badges -->
+      <div id="badge-row" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0 20px"></div>
+
+      <!-- Mini wall -->
+      <p class="mini-wall-label">Your position on the wall:</p>
+      <div class="wall-wrap" style="padding:0;margin-bottom:20px">
+        <div class="wall-grid mini" id="mini-grid"></div>
+      </div>
+
+      <!-- Name & message card -->
+      <div class="card" id="name-card" style="margin-bottom:12px;display:none">
+        <p id="display-name" style="font-size:1.05rem;font-weight:600"></p>
+        <p id="display-msg" class="text-sm text-muted" style="margin-top:4px;display:none"></p>
+      </div>
+
+      <!-- Status progress -->
+      <div class="card" style="margin-bottom:12px">
+        <p class="text-xs text-muted" style="margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">Installation Status</p>
+        <div class="progress-track" id="progress-track"></div>
+        <p id="batch-info" class="text-xs text-muted" style="margin-top:10px"></p>
+      </div>
+
+      <!-- Install photo -->
+      <div id="photo-section" style="display:none;margin-bottom:12px">
+        <p class="text-xs text-muted" style="margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em">Your Block on the Wall</p>
+        <img id="install-photo" src="" alt="Installed block"
+          style="width:100%;border-radius:var(--radius);border:1px solid var(--border)">
+      </div>
+
+      <!-- Action buttons -->
+      <div class="btn-row" id="action-buttons"></div>
+
+    </div>
+
+    <!-- Auth form (if no params) -->
+    <div id="auth-section" style="display:none">
+      <h2 style="margin-bottom:6px">My Block</h2>
+      <p class="subtitle">Enter your details to view your block status.</p>
+      <div class="card">
+        <div class="form-group">
+          <label>Block Number</label>
+          <input type="number" id="auth-number" placeholder="e.g. 42" min="1" max="100">
+        </div>
+        <div class="form-group">
+          <label>Mobile (+852)</label>
+          <div class="input-with-prefix">
+            <span class="input-prefix">+852</span>
+            <input type="tel" id="auth-mobile" placeholder="9123 4567">
+          </div>
+        </div>
+        <div id="auth-error" class="form-error"></div>
+        <div class="btn-row" style="margin-top:8px">
+          <button class="btn btn-primary" id="btn-auth">View My Block</button>
+        </div>
+      </div>
+      <p style="text-align:center;margin-top:16px">
+        <a href="lookup.html" class="text-sm text-muted">Or use the Lookup page →</a>
+      </p>
+    </div>
+
+    <!-- Error -->
+    <div id="error-section" style="display:none;text-align:center;padding:40px 0">
+      <div style="font-size:2.5rem;margin-bottom:12px">🔍</div>
+      <h3 id="error-msg">Block not found</h3>
+      <p class="text-sm text-muted" style="margin-top:6px">Double-check your block number and mobile number.</p>
+      <div style="margin-top:16px">
+        <a href="lookup.html" class="btn btn-secondary">Try Again</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ── CONFIG ──
+    const SUPABASE_URL  = 'https://kbjndsrllqpuaedotdng.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtiam5kc3JsbHFwdWFlZG90ZG5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4Mjg2NDAsImV4cCI6MjA4NzQwNDY0MH0.gSdKU54sAAAdDoqEhczuj4TxmcNzghMe9WN84zLOaAY';
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    function showToast(msg, dur = 2500) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), dur);
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      if (msg) { el.textContent = msg; el.classList.add('show'); }
+      else el.classList.remove('show');
+    }
+
+    function setSection(id) {
+      ['loading-section','main-section','auth-section','error-section'].forEach(s => {
+        document.getElementById(s).style.display = s === id ? '' : 'none';
+      });
+    }
+
+    async function loadBlock(number, mobile) {
+      setSection('loading-section');
+
+      const { data, error } = await sb
+        .from('blocks')
+        .select('number, name, message, public, status, payment_status, batch, install_photo')
+        .eq('number', number)
+        .eq('mobile', mobile)
+        .single();
+
+      if (error || !data) {
+        document.getElementById('error-msg').textContent = 'Block not found. Check your number and mobile.';
+        setSection('error-section');
+        return;
+      }
+
+      renderBlock(data, mobile);
+    }
+
+    function renderBlock(block, mobile) {
+      const num    = String(block.number).padStart(3, '0');
+      const row    = Math.ceil(block.number / 10);
+      const col    = ((block.number - 1) % 10) + 1;
+      const status = block.status;
+      const paid   = block.payment_status;
+
+      document.getElementById('block-num-display').textContent = '#' + num;
+      document.getElementById('block-pos-display').textContent = `Row ${row} · Col ${col}`;
+
+      // Badges
+      const badgeMap = {
+        available: 'badge-available',
+        reserved:  'badge-reserved',
+        engraving: 'badge-paid',
+        installed: 'badge-installed',
+      };
+      const payLabel = { pending: '⏳ Payment Pending', paid: '✓ Paid', refunded: '↩ Refunded' };
+      const payBadge = { pending: 'badge-pending', paid: 'badge-paid', refunded: 'badge-refunded' };
+
+      document.getElementById('badge-row').innerHTML = `
+        <span class="badge ${badgeMap[status] || 'badge-available'}">
+          ${status.charAt(0).toUpperCase() + status.slice(1)}
+        </span>
+        <span class="badge ${payBadge[paid] || 'badge-pending'}">
+          ${payLabel[paid] || paid}
+        </span>
+      `;
+
+      // Mini wall
+      const miniGrid = document.getElementById('mini-grid');
+      miniGrid.innerHTML = '';
+      for (let i = 1; i <= 100; i++) {
+        const isMe = i === block.number;
+        const cell = document.createElement('div');
+        cell.className = 'cell ' + (isMe ? 'highlight paid' : 'available');
+        if (isMe) cell.innerHTML = `<span class="cell-num">#${num}</span>`;
+        miniGrid.appendChild(cell);
+      }
+
+      // Name & message
+      if (block.public && block.name) {
+        document.getElementById('name-card').style.display = '';
+        document.getElementById('display-name').textContent = block.name;
+        if (block.message) {
+          const msgEl = document.getElementById('display-msg');
+          msgEl.textContent = `"${block.message}"`;
+          msgEl.style.display = '';
+        }
+      }
+
+      // Progress
+      const steps = ['reserved', 'engraving', 'installed'];
+      const labels = { reserved: 'Reserved', engraving: 'Engraving', installed: 'Installed' };
+      const curIdx = steps.indexOf(status);
+      document.getElementById('progress-track').innerHTML = steps.map((s, i) => {
+        let cls = '';
+        if (i < curIdx) cls = 'done';
+        if (i === curIdx) cls = 'active';
+        return `<div class="progress-step ${cls}"><div class="ps-label">${labels[s]}</div></div>`;
+      }).join('');
+
+      document.getElementById('batch-info').innerHTML = status === 'installed'
+        ? '✅ Your block is on the wall!'
+        : `Next installation: <strong>${block.batch || 'Mar 30, 2026'}</strong>`;
+
+      // Install photo
+      if (block.install_photo) {
+        document.getElementById('photo-section').style.display = '';
+        document.getElementById('install-photo').src = block.install_photo;
+      }
+
+      // Action buttons
+      const shareText = encodeURIComponent(
+        `I own Block #${num} at Shiguang Brewing Co. in Shenzhen 🍺\n` +
+        `shiguangbrewing.com/blocks`
+      );
+      let certBtn = '';
+      if (paid === 'paid') {
+        certBtn = `<a href="success.html?number=${block.number}&mobile=${encodeURIComponent(mobile)}"
+          class="btn btn-primary">🎖 View Certificate</a>`;
+      }
+      document.getElementById('action-buttons').innerHTML = `
+        ${certBtn}
+        <a href="https://wa.me/?text=${shareText}" target="_blank" class="btn btn-ghost">💬 Share on WhatsApp</a>
+        <a href="index.html" class="btn btn-secondary">Back to Wall</a>
+      `;
+
+      setSection('main-section');
+    }
+
+    // ── Auth form ──
+    document.getElementById('btn-auth').addEventListener('click', async () => {
+      const number = parseInt(document.getElementById('auth-number').value);
+      const mobile = '+852' + document.getElementById('auth-mobile').value.trim().replace(/\s/g,'');
+      showError('auth-error', '');
+      if (!number || number < 1 || number > 100) return showError('auth-error', 'Enter a valid block number (1–100).');
+      if (!mobile || mobile.length < 12) return showError('auth-error', 'Enter a valid mobile number.');
+      await loadBlock(number, mobile);
+    });
+
+    // ── Init from URL params ──
+    (async () => {
+      const params = new URLSearchParams(location.search);
+      const numParam = params.get('number');
+      const mobParam = params.get('mobile');
+
+      let mobile = mobParam;
+      if (!mobile) {
+        const saved = JSON.parse(localStorage.getItem('sg_block') || 'null');
+        if (saved && saved.number == parseInt(numParam)) mobile = saved.mobile;
+      }
+
+      if (numParam && mobile) {
+        await loadBlock(parseInt(numParam), mobile);
+      } else {
+        // Pre-fill from localStorage
+        const saved = JSON.parse(localStorage.getItem('sg_block') || 'null');
+        if (saved) {
+          if (saved.number) document.getElementById('auth-number').value = saved.number;
+          if (saved.mobile) document.getElementById('auth-mobile').value = saved.mobile.replace('+852','');
+        }
+        setSection('auth-section');
+      }
+    })();
+  </script>
+</body>
+</html>

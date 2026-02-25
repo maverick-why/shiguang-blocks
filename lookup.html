@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Look Up My Block · Shiguang Brewing Co.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .page-wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrap">
+
+    <header class="site-header" style="text-align:left;padding:20px 0 16px">
+      <a href="index.html" style="font-size:0.83rem;color:var(--muted);display:inline-flex;align-items:center;gap:5px">← Back to Wall</a>
+    </header>
+
+    <!-- Lookup form -->
+    <div id="lookup-form">
+      <h2>Look Up My Block</h2>
+      <p class="subtitle">Enter your mobile and block number to see your status.</p>
+
+      <div class="card">
+        <div class="form-group">
+          <label for="lu-number">Block Number</label>
+          <input type="number" id="lu-number" placeholder="e.g. 42" min="1" max="100">
+        </div>
+        <div class="form-group">
+          <label for="lu-mobile">Mobile (+852)</label>
+          <div class="input-with-prefix">
+            <span class="input-prefix">+852</span>
+            <input type="tel" id="lu-mobile" placeholder="9123 4567">
+          </div>
+        </div>
+        <div id="lu-error" class="form-error"></div>
+        <div class="btn-row" style="margin-top:4px">
+          <button class="btn btn-primary" id="btn-lookup">Find My Block</button>
+        </div>
+      </div>
+
+      <!-- Auto-fill from localStorage -->
+      <p id="saved-hint" class="text-xs text-muted text-center" style="margin-top:12px;display:none">
+        ↑ Pre-filled from your last claim. <a href="#" id="btn-clear-saved">Clear</a>
+      </p>
+    </div>
+
+    <!-- Loading -->
+    <div id="lookup-loading" class="loading" style="display:none">
+      <div class="spinner"></div>
+      Looking up…
+    </div>
+
+    <!-- Result: inline mine.html content -->
+    <div id="lookup-result" style="display:none"></div>
+
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ── CONFIG ──
+    const SUPABASE_URL  = 'https://kbjndsrllqpuaedotdng.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtiam5kc3JsbHFwdWFlZG90ZG5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4Mjg2NDAsImV4cCI6MjA4NzQwNDY0MH0.gSdKU54sAAAdDoqEhczuj4TxmcNzghMe9WN84zLOaAY';
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    function showToast(msg, dur = 2500) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), dur);
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      if (msg) { el.textContent = msg; el.classList.add('show'); }
+      else el.classList.remove('show');
+    }
+
+    // ── Pre-fill from localStorage ──
+    const saved = JSON.parse(localStorage.getItem('sg_block') || 'null');
+    if (saved) {
+      if (saved.number) document.getElementById('lu-number').value = saved.number;
+      if (saved.mobile) {
+        const mob = saved.mobile.replace('+852', '');
+        document.getElementById('lu-mobile').value = mob;
+      }
+      document.getElementById('saved-hint').style.display = '';
+    }
+
+    document.getElementById('btn-clear-saved').addEventListener('click', e => {
+      e.preventDefault();
+      localStorage.removeItem('sg_block');
+      document.getElementById('lu-number').value = '';
+      document.getElementById('lu-mobile').value = '';
+      document.getElementById('saved-hint').style.display = 'none';
+    });
+
+    // ── Lookup ──
+    async function doLookup(number, mobile) {
+      document.getElementById('lookup-form').style.display = 'none';
+      document.getElementById('lookup-loading').style.display = '';
+      document.getElementById('lookup-result').style.display  = 'none';
+      showError('lu-error', '');
+
+      const { data, error } = await sb
+        .from('blocks')
+        .select('number, name, message, public, status, payment_status, batch, install_photo, created_at')
+        .eq('number', number)
+        .eq('mobile', mobile)
+        .single();
+
+      document.getElementById('lookup-loading').style.display = 'none';
+
+      if (error || !data) {
+        document.getElementById('lookup-form').style.display = '';
+        showError('lu-error', 'No block found with those details. Check your number and mobile.');
+        return;
+      }
+
+      renderMineInline(data);
+    }
+
+    document.getElementById('btn-lookup').addEventListener('click', async () => {
+      const number = parseInt(document.getElementById('lu-number').value);
+      const mobile = '+852' + document.getElementById('lu-mobile').value.trim().replace(/\s/g,'');
+      showError('lu-error', '');
+      if (!number || number < 1 || number > 100) return showError('lu-error', 'Enter a valid block number (1–100).');
+      if (!mobile || mobile.length < 12) return showError('lu-error', 'Enter a valid +852 mobile number.');
+      await doLookup(number, mobile);
+    });
+
+    // ── Render mine.html content inline ──
+    function renderMineInline(block) {
+      const num      = String(block.number).padStart(3, '0');
+      const row      = Math.ceil(block.number / 10);
+      const col      = ((block.number - 1) % 10) + 1;
+      const status   = block.status;
+      const payStatus = block.payment_status;
+      const showName = block.public && block.name;
+      const showMsg  = block.public && block.message;
+
+      // Status badge helper
+      const badgeMap = {
+        available: 'badge-available',
+        reserved:  'badge-reserved',
+        engraving: 'badge-paid',
+        installed: 'badge-installed',
+      };
+      const payBadgeMap = {
+        pending:  'badge-pending',
+        paid:     'badge-paid',
+        refunded: 'badge-refunded',
+      };
+
+      // Progress steps
+      const steps = [
+        { key: 'reserved',  label: 'Reserved' },
+        { key: 'engraving', label: 'Engraving' },
+        { key: 'installed', label: 'Installed' },
+      ];
+      const stepOrder = ['reserved','engraving','installed'];
+      const curIdx = stepOrder.indexOf(status);
+
+      const progressHtml = steps.map((s, i) => {
+        let cls = '';
+        if (i < curIdx) cls = 'done';
+        if (i === curIdx) cls = 'active';
+        return `<div class="progress-step ${cls}"><div class="ps-label">${s.label}</div></div>`;
+      }).join('');
+
+      // Build mini wall (10×10)
+      let wallHtml = '';
+      for (let i = 1; i <= 100; i++) {
+        const isMe = i === block.number;
+        const cellClass = isMe ? `cell highlight paid` : 'cell available';
+        wallHtml += `<div class="${cellClass}">${isMe ? `<span class="cell-num">#${num}</span>` : ''}</div>`;
+      }
+
+      // Photo section
+      const photoHtml = block.install_photo
+        ? `<div style="margin-top:16px">
+            <p class="text-xs text-muted" style="margin-bottom:6px">YOUR BLOCK ON THE WALL</p>
+            <img src="${block.install_photo}" alt="Block #${num} installed"
+              style="width:100%;border-radius:var(--radius);border:1px solid var(--border)">
+           </div>`
+        : '';
+
+      // WhatsApp share
+      const shareText = encodeURIComponent(
+        `I own Block #${num} at Shiguang Brewing Co. in Shenzhen 🍺\n` +
+        `shiguangbrewing.com/blocks`
+      );
+
+      // Certificate link (only if paid)
+      const certHtml = payStatus === 'paid'
+        ? `<a href="success.html?number=${block.number}&mobile=${encodeURIComponent(block.mobile || '')}"
+              class="btn btn-primary" style="margin-bottom:8px">🎖 View Certificate</a>`
+        : '';
+
+      const html = `
+        <div style="margin-top:8px">
+          <button class="btn btn-ghost btn-sm" id="btn-back-lookup"
+            style="margin-bottom:20px;width:auto">← Search Again</button>
+
+          <!-- Number big -->
+          <div class="block-number-display">
+            <div class="block-num-big">#${num}</div>
+            <div class="block-position">Row ${row} · Col ${col}</div>
+          </div>
+
+          <!-- Status badges -->
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:12px 0 20px">
+            <span class="badge ${badgeMap[status] || 'badge-available'}">
+              ${status.charAt(0).toUpperCase() + status.slice(1)}
+            </span>
+            <span class="badge ${payBadgeMap[payStatus] || 'badge-pending'}">
+              ${payStatus === 'paid' ? '✓ Paid' : payStatus === 'refunded' ? '↩ Refunded' : '⏳ Payment Pending'}
+            </span>
+          </div>
+
+          <!-- Mini wall -->
+          <p class="mini-wall-label text-xs text-muted text-center" style="margin-bottom:8px">Your position:</p>
+          <div class="wall-wrap" style="padding:0;margin-bottom:20px">
+            <div class="wall-grid mini">${wallHtml}</div>
+          </div>
+
+          <!-- Name & message -->
+          ${showName ? `<div class="card" style="margin-bottom:12px">
+            <p style="font-size:1.05rem;font-weight:600">${block.name}</p>
+            ${showMsg ? `<p class="text-sm text-muted" style="margin-top:4px">"${block.message}"</p>` : ''}
+          </div>` : ''}
+
+          <!-- Progress -->
+          <div class="card" style="margin-bottom:12px">
+            <p class="text-xs text-muted" style="margin-bottom:10px;text-transform:uppercase;letter-spacing:0.06em">Status</p>
+            <div class="progress-track">${progressHtml}</div>
+            <p class="text-xs text-muted" style="margin-top:10px">
+              ${status === 'installed' ? '✓ Your block is on the wall!' :
+                `Next installation batch: <strong>${block.batch || 'Mar 30, 2026'}</strong>`}
+            </p>
+          </div>
+
+          ${photoHtml}
+
+          <!-- Actions -->
+          <div class="btn-row" style="margin-top:20px">
+            ${certHtml}
+            <a href="https://wa.me/?text=${shareText}" target="_blank"
+              class="btn btn-ghost">💬 Share on WhatsApp</a>
+            <a href="index.html" class="btn btn-secondary">Back to Wall</a>
+          </div>
+        </div>
+      `;
+
+      const resultEl = document.getElementById('lookup-result');
+      resultEl.innerHTML = html;
+      resultEl.style.display = '';
+
+      document.getElementById('btn-back-lookup').addEventListener('click', () => {
+        resultEl.style.display = 'none';
+        document.getElementById('lookup-form').style.display = '';
+      });
+    }
+
+    // ── Check URL params ──
+    (async () => {
+      const params = new URLSearchParams(location.search);
+      const numParam = params.get('number');
+      const mobParam = params.get('mobile');
+      if (numParam && mobParam) {
+        document.getElementById('lu-number').value = parseInt(numParam);
+        document.getElementById('lu-mobile').value = mobParam.replace('+852','');
+        await doLookup(parseInt(numParam), mobParam);
+      }
+    })();
+  </script>
+</body>
+</html>

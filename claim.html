@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claim Your Block · Shiguang Brewing Co.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .page-wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.83rem;
+      color: var(--muted);
+      padding: 12px 0;
+      margin-bottom: 4px;
+    }
+    .back-link:hover { color: var(--gold); text-decoration: none; }
+    .payme-placeholder {
+      width: 120px;
+      height: 120px;
+      background: #fff;
+      border-radius: var(--radius-s);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+      color: #999;
+      font-size: 0.72rem;
+      text-align: center;
+      padding: 8px;
+    }
+    .fps-account {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-s);
+      padding: 12px 14px;
+      margin: 8px 0;
+      font-size: 0.9rem;
+    }
+    .fps-account .label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 2px;
+    }
+    .fps-account .value {
+      color: var(--gold);
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+    .amount-display {
+      text-align: center;
+      margin: 16px 0;
+    }
+    .amount-big {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .amount-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+    .mini-wall-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrap">
+
+    <header class="site-header" style="text-align:left;padding:20px 0 12px">
+      <a href="index.html" class="back-link">← Back to Wall</a>
+    </header>
+
+    <!-- Step Indicator -->
+    <div class="steps" id="step-indicator">
+      <div class="step-item active" data-step="1">
+        <div class="step-circle">1</div>
+        <span class="step-label">Info</span>
+      </div>
+      <div class="step-item" data-step="2">
+        <div class="step-circle">2</div>
+        <span class="step-label">Your #</span>
+      </div>
+      <div class="step-item" data-step="3">
+        <div class="step-circle">3</div>
+        <span class="step-label">Payment</span>
+      </div>
+      <div class="step-item" data-step="4">
+        <div class="step-circle">4</div>
+        <span class="step-label">Done</span>
+      </div>
+    </div>
+
+    <!-- ─── STEP 1: Info ─── -->
+    <div class="step-panel active" id="step1">
+      <h2>Claim Your Block</h2>
+      <p class="subtitle">Your name goes on the wall at Shiguang Brewing Co. in Shenzhen.</p>
+
+      <div id="form-error" class="form-error"></div>
+
+      <div class="form-group">
+        <label for="name">Your Name / Nickname</label>
+        <input type="text" id="name" placeholder="e.g. Marcus, 小明, The Beer Guy" maxlength="30" autocomplete="name">
+      </div>
+
+      <div class="form-group">
+        <label for="mobile">WhatsApp / Mobile</label>
+        <div class="input-with-prefix">
+          <span class="input-prefix">+852</span>
+          <input type="tel" id="mobile" placeholder="9123 4567" maxlength="15" autocomplete="tel">
+        </div>
+        <p class="text-xs text-muted" style="margin-top:5px">We'll contact you to confirm payment. No OTP.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="message">Your Message <span style="font-size:0.8em;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <textarea id="message" placeholder="A short message — or leave a toast to future beer drinkers…" maxlength="40" rows="3"></textarea>
+        <div class="char-count" id="char-count">0 / 40</div>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="public-check" checked>
+        <label for="public-check">Show my name &amp; message publicly on the wall</label>
+      </div>
+
+      <div class="checkbox-row">
+        <input type="checkbox" id="tc-check">
+        <label for="tc-check">I understand the message will be reviewed before engraving, and installation is in batches (first batch: <strong>Mar 30, 2026</strong>).</label>
+      </div>
+
+      <div class="btn-row" style="margin-top:20px">
+        <button class="btn btn-primary" id="btn-step1">Next →</button>
+      </div>
+    </div>
+
+    <!-- ─── STEP 2: Your Number ─── -->
+    <div class="step-panel" id="step2">
+      <h2>Your Block</h2>
+      <p class="subtitle">We've reserved this number for you.</p>
+
+      <div class="block-number-display">
+        <div class="block-num-big" id="s2-number">—</div>
+        <div class="block-position" id="s2-position">Row — · Col —</div>
+      </div>
+
+      <p class="mini-wall-label">Your position on the wall:</p>
+      <div class="wall-wrap" style="padding:0">
+        <div class="wall-grid mini" id="s2-mini-grid"></div>
+      </div>
+
+      <div class="card" style="margin-top:20px;text-align:center">
+        <p class="text-sm text-muted" style="margin-bottom:6px">
+          Proceed to payment to lock in your block.
+        </p>
+        <p class="text-xs text-muted">
+          Your block will be held for 48 hours after payment is confirmed.
+        </p>
+      </div>
+
+      <div class="btn-row side-by-side" style="margin-top:20px">
+        <button class="btn btn-secondary" id="btn-back-step1">← Back</button>
+        <button class="btn btn-primary" id="btn-step2">Confirm &amp; Pay →</button>
+      </div>
+    </div>
+
+    <!-- ─── STEP 3: Payment ─── -->
+    <div class="step-panel" id="step3">
+      <h2>Payment</h2>
+      <p class="subtitle">Transfer HK$199 using either method below.</p>
+
+      <div class="amount-display">
+        <div class="amount-big">HK$199</div>
+        <div class="amount-label">Reference: <strong id="s3-ref" style="color:var(--gold)">—</strong></div>
+      </div>
+
+      <!-- PayMe -->
+      <div class="payment-card">
+        <h3>PayMe</h3>
+        <div class="payme-placeholder">
+          <!-- Replace with actual PayMe QR image -->
+          <span>Add PayMe<br>QR here<br><code>payme-qr.png</code></span>
+        </div>
+        <p class="payment-detail text-center text-sm">
+          Scan the QR code in PayMe app.<br>
+          Add reference: <strong id="s3-ref-payme">—</strong>
+        </p>
+      </div>
+
+      <!-- FPS -->
+      <div class="payment-card">
+        <h3>FPS 快速支付</h3>
+        <div class="fps-account">
+          <div class="label">FPS ID / Phone</div>
+          <div class="value"><!-- YOUR FPS NUMBER --></div>
+        </div>
+        <div class="fps-account">
+          <div class="label">Account Name</div>
+          <div class="value">時光釀造所 / Shiguang Brewing Co.</div>
+        </div>
+        <p class="text-xs text-muted" style="margin-top:8px">
+          Include reference <strong id="s3-ref-fps">—</strong> in the payment remarks.
+        </p>
+      </div>
+
+      <div id="s3-error" class="form-error"></div>
+
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn btn-primary" id="btn-paid">I've Paid ✓</button>
+        <button class="btn btn-secondary" id="btn-back-step2">← Back</button>
+      </div>
+    </div>
+
+    <!-- ─── STEP 4: Done ─── -->
+    <div class="step-panel" id="step4">
+      <div class="success-icon" style="width:64px;height:64px;background:rgba(212,160,23,0.1);border-color:var(--amber);font-size:2rem;display:flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid;margin:0 auto 20px">⏳</div>
+
+      <div class="pending-banner">
+        <h3>Payment Pending Confirmation</h3>
+        <p>We've received your claim for <strong id="s4-number" style="color:var(--gold)">—</strong>.</p>
+        <p style="margin-top:6px">We'll verify your payment and send a WhatsApp confirmation within 24 hours.</p>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <table style="width:100%;font-size:0.88rem;border-collapse:collapse">
+          <tr><td style="color:var(--muted);padding:4px 0;width:40%">Block</td><td id="s4-block" style="color:var(--gold);font-weight:600"></td></tr>
+          <tr><td style="color:var(--muted);padding:4px 0">Name</td><td id="s4-name"></td></tr>
+          <tr><td style="color:var(--muted);padding:4px 0">Mobile</td><td id="s4-mobile"></td></tr>
+          <tr><td style="color:var(--muted);padding:4px 0">Batch</td><td>Mar 30, 2026</td></tr>
+        </table>
+      </div>
+
+      <div class="btn-row" style="margin-top:20px">
+        <a href="lookup.html" class="btn btn-secondary">Look Up My Block Later</a>
+        <a href="index.html" class="btn btn-ghost">Back to Wall</a>
+      </div>
+    </div>
+
+  </div><!-- /page-wrap -->
+
+  <div id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ── CONFIG ──
+    const SUPABASE_URL  = 'https://kbjndsrllqpuaedotdng.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtiam5kc3JsbHFwdWFlZG90ZG5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4Mjg2NDAsImV4cCI6MjA4NzQwNDY0MH0.gSdKU54sAAAdDoqEhczuj4TxmcNzghMe9WN84zLOaAY';
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    // ── State ──
+    let currentStep = 1;
+    let assignedNumber = null;
+    let formData = {};
+
+    // ── Toast ──
+    function showToast(msg, dur = 3000) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), dur);
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      if (msg) {
+        el.textContent = msg;
+        el.classList.add('show');
+      } else {
+        el.classList.remove('show');
+      }
+    }
+
+    // ── Step management ──
+    function goToStep(n) {
+      // Update panels
+      document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('step' + n).classList.add('active');
+
+      // Update indicator
+      document.querySelectorAll('.step-item').forEach(item => {
+        const s = parseInt(item.dataset.step);
+        item.classList.remove('active', 'done');
+        if (s === n) item.classList.add('active');
+        if (s < n)  item.classList.add('done');
+      });
+
+      currentStep = n;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // ── Step 1 → 2 ──
+    document.getElementById('btn-step1').addEventListener('click', async () => {
+      const name    = document.getElementById('name').value.trim();
+      const mobile  = document.getElementById('mobile').value.trim().replace(/\s/g, '');
+      const message = document.getElementById('message').value.trim();
+      const pub     = document.getElementById('public-check').checked;
+      const tc      = document.getElementById('tc-check').checked;
+
+      showError('form-error', '');
+
+      if (!name)   return showError('form-error', 'Please enter your name.');
+      if (!mobile || mobile.length < 8) return showError('form-error', 'Please enter a valid mobile number.');
+      if (!tc)     return showError('form-error', 'Please accept the terms to continue.');
+
+      formData = { name, mobile: '+852' + mobile, message, public: pub };
+
+      // Find next available block
+      const btn = document.getElementById('btn-step1');
+      btn.disabled = true;
+      btn.textContent = 'Finding your block…';
+
+      const { data, error } = await sb
+        .from('blocks')
+        .select('number')
+        .eq('status', 'available')
+        .order('number', { ascending: true })
+        .limit(1);
+
+      btn.disabled = false;
+      btn.textContent = 'Next →';
+
+      if (error || !data || data.length === 0) {
+        showError('form-error', data?.length === 0
+          ? 'Sorry — all blocks have been claimed!'
+          : 'Connection error. Please try again.');
+        return;
+      }
+
+      assignedNumber = data[0].number;
+      renderStep2();
+      goToStep(2);
+    });
+
+    // ── Render Step 2 ──
+    function renderStep2() {
+      const num = String(assignedNumber).padStart(3, '0');
+      const row = Math.ceil(assignedNumber / 10);
+      const col = ((assignedNumber - 1) % 10) + 1;
+
+      document.getElementById('s2-number').textContent = '#' + num;
+      document.getElementById('s2-position').textContent = `Row ${row} · Col ${col}`;
+
+      // Mini wall grid (10×10, highlight assigned)
+      const grid = document.getElementById('s2-mini-grid');
+      grid.innerHTML = '';
+      for (let i = 1; i <= 100; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell ' + (i === assignedNumber ? 'highlight paid' : 'available');
+        if (i === assignedNumber) {
+          cell.innerHTML = `<span class="cell-num">#${num}</span>`;
+        }
+        grid.appendChild(cell);
+      }
+    }
+
+    // Step 2 back
+    document.getElementById('btn-back-step1').addEventListener('click', () => goToStep(1));
+
+    // Step 2 → 3: Reserve in DB
+    document.getElementById('btn-step2').addEventListener('click', async () => {
+      const btn = document.getElementById('btn-step2');
+      btn.disabled = true;
+      btn.textContent = 'Reserving…';
+
+      const { data, error } = await sb
+        .from('blocks')
+        .update({
+          name:           formData.name,
+          mobile:         formData.mobile,
+          message:        formData.message || null,
+          public:         formData.public,
+          status:         'reserved',
+          payment_status: 'pending',
+        })
+        .eq('number', assignedNumber)
+        .eq('status', 'available') // concurrency guard
+        .select('number');
+
+      btn.disabled = false;
+      btn.textContent = 'Confirm & Pay →';
+
+      if (error || !data || data.length === 0) {
+        // Block was taken — get next one
+        showToast('That block was just taken. Finding you another…', 3500);
+
+        const { data: next } = await sb
+          .from('blocks')
+          .select('number')
+          .eq('status', 'available')
+          .order('number', { ascending: true })
+          .limit(1);
+
+        if (!next || next.length === 0) {
+          showError('form-error', 'Sorry — all blocks have been claimed!');
+          goToStep(1);
+          return;
+        }
+
+        assignedNumber = next[0].number;
+        renderStep2();
+        return;
+      }
+
+      // Save to localStorage for easy lookup later
+      localStorage.setItem('sg_block', JSON.stringify({
+        number: assignedNumber,
+        mobile: formData.mobile,
+        name:   formData.name,
+      }));
+
+      renderStep3();
+      goToStep(3);
+    });
+
+    // ── Render Step 3 ──
+    function renderStep3() {
+      const ref = `#${String(assignedNumber).padStart(3, '0')}`;
+      ['s3-ref', 's3-ref-payme', 's3-ref-fps'].forEach(id => {
+        document.getElementById(id).textContent = ref;
+      });
+    }
+
+    // Step 3 back
+    document.getElementById('btn-back-step2').addEventListener('click', () => goToStep(2));
+
+    // Step 3 → 4: I've Paid
+    document.getElementById('btn-paid').addEventListener('click', () => {
+      const num = String(assignedNumber).padStart(3, '0');
+      document.getElementById('s4-number').textContent = `#${num}`;
+      document.getElementById('s4-block').textContent = `#${num}`;
+      document.getElementById('s4-name').textContent   = formData.name;
+      document.getElementById('s4-mobile').textContent = formData.mobile;
+      goToStep(4);
+    });
+
+    // ── Message char counter ──
+    document.getElementById('message').addEventListener('input', function () {
+      const len = this.value.length;
+      const el  = document.getElementById('char-count');
+      el.textContent = len + ' / 40';
+      el.className   = 'char-count' + (len >= 40 ? ' over' : len >= 35 ? ' near' : '');
+    });
+  </script>
+</body>
+</html>

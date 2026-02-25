@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome, Founder · Shiguang Brewing Co.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .page-wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 20px 64px;
+    }
+    .member-card {
+      background: linear-gradient(135deg, #1a1500 0%, #0f0f20 60%, #1a1a2e 100%);
+      border: 1.5px solid var(--gold);
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+      margin: 24px 0;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 40px rgba(240,192,64,0.15);
+    }
+    .member-card.steel {
+      background: linear-gradient(135deg, #101018 0%, #1a1a2e 100%);
+      border-color: #a0aec0;
+      box-shadow: 0 8px 40px rgba(160,174,192,0.1);
+    }
+    .member-card::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: rgba(240,192,64,0.05);
+    }
+    .member-card.steel::before {
+      background: rgba(160,174,192,0.04);
+    }
+    .card-logo {
+      font-size: 1.6rem;
+      margin-bottom: 16px;
+    }
+    .card-brand {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .member-card.steel .card-brand { color: #a0aec0; }
+    .card-tier {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .card-name {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .member-card.steel .card-name { color: var(--text); }
+    .card-status {
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+    .card-shine {
+      position: absolute;
+      top: 0; left: -60%;
+      width: 40%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+      transform: skewX(-20deg);
+    }
+
+    .what-happens {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .what-happens h3 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .step-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .step-dot {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      border-radius: 50%;
+      background: rgba(240,192,64,0.12);
+      border: 1px solid var(--gold-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-top: 1px;
+    }
+    .step-text { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+    .step-text strong { color: var(--text); }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrap">
+
+    <header class="site-header" style="padding-top:28px">
+      <div class="site-logo">⬡</div>
+      <h1>Shiguang Brewing Co.</h1>
+      <p class="tagline">時光釀造所</p>
+    </header>
+
+    <!-- Loading -->
+    <div id="loading-section" class="loading">
+      <div class="spinner"></div>
+      Confirming payment…
+    </div>
+
+    <!-- Main content -->
+    <div id="main-section" style="display:none">
+
+      <!-- Check icon -->
+      <div class="success-icon" style="background:rgba(16,185,129,0.1);border-color:var(--green)">✓</div>
+      <h2 style="text-align:center;margin-bottom:4px">Payment Received!</h2>
+      <p class="subtitle text-center">Welcome to the Shiguang family.</p>
+
+      <!-- Member card visual -->
+      <div class="member-card" id="member-card-vis">
+        <div class="card-shine"></div>
+        <div class="card-logo">⬡</div>
+        <div class="card-brand">Shiguang Brewing Co. · 時光釀造所</div>
+        <div class="card-tier" id="card-tier-display">— Founder</div>
+        <div class="card-name" id="card-name-display">—</div>
+        <div class="card-status">Founding Member · Card being prepared</div>
+      </div>
+
+      <!-- What happens next -->
+      <div class="what-happens">
+        <h3>What happens next</h3>
+        <div class="step-list">
+          <div class="step-row">
+            <div class="step-dot">1</div>
+            <div class="step-text"><strong>WhatsApp confirmation</strong> — we'll reach out within 24 hours to confirm your membership details.</div>
+          </div>
+          <div class="step-row">
+            <div class="step-dot">2</div>
+            <div class="step-text"><strong>Physical card</strong> — your card will be ready for pickup when we open, or we can arrange delivery.</div>
+          </div>
+          <div class="step-row">
+            <div class="step-dot">3</div>
+            <div class="step-text"><strong>Founder event</strong> — you'll be invited to a private pre-opening event before Mar 30, 2026.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact info -->
+      <div class="card" style="margin-bottom:16px;text-align:center">
+        <p class="text-sm text-muted" style="margin-bottom:6px">Questions? WhatsApp us directly:</p>
+        <a href="https://wa.me/852XXXXXXXX" id="wa-link"
+          class="btn btn-ghost btn-sm" style="display:inline-flex;width:auto">
+          💬 WhatsApp
+        </a>
+      </div>
+
+      <div class="btn-row">
+        <a href="membership.html" class="btn btn-secondary">Back to Membership</a>
+        <a href="index.html" class="btn btn-ghost">View the Wall</a>
+      </div>
+
+    </div>
+
+    <!-- Fallback (no data) -->
+    <div id="fallback-section" style="display:none;text-align:center;padding:20px 0">
+      <div style="font-size:2.5rem;margin-bottom:16px">🎉</div>
+      <h2 style="margin-bottom:8px">Thank you!</h2>
+      <p class="text-sm text-muted" style="margin-bottom:20px">
+        Your payment was received.<br>
+        We'll WhatsApp you within 24 hours to confirm your membership.
+      </p>
+      <div class="btn-row">
+        <a href="membership.html" class="btn btn-secondary">Back to Membership</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const TIERS = {
+      black: { label: 'Black Founder', cardClass: '' },
+      steel: { label: 'Steel Founder', cardClass: 'steel' },
+    };
+
+    function setSection(id) {
+      ['loading-section','main-section','fallback-section'].forEach(s => {
+        document.getElementById(s).style.display = s === id ? '' : 'none';
+      });
+    }
+
+    (function init() {
+      // Try to get info from localStorage (set before redirect to Stripe)
+      const saved = JSON.parse(localStorage.getItem('sg_member') || 'null');
+
+      if (saved && saved.name && saved.tier && TIERS[saved.tier]) {
+        const t = TIERS[saved.tier];
+        document.getElementById('card-name-display').textContent = saved.name;
+        document.getElementById('card-tier-display').textContent = t.label;
+        if (t.cardClass) {
+          document.getElementById('member-card-vis').classList.add(t.cardClass);
+        }
+        setSection('main-section');
+        // Clear so it doesn't show stale data next visit
+        localStorage.removeItem('sg_member');
+      } else {
+        // No local data — show fallback
+        setSection('fallback-section');
+      }
+    })();
+  </script>
+</body>
+</html>

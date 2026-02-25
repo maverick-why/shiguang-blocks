@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wall of Blocks · Shiguang Brewing Co.</title>
+  <meta name="description" content="Own a piece of Shenzhen's first craft brewery. 100 blocks. 100 stories. Claim yours.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Page-specific styles */
+    .hero {
+      text-align: center;
+      padding: 0 20px 28px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+    .hero-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+    .hero-title span { color: var(--gold); }
+    .hero-body {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.7;
+      margin-bottom: 4px;
+    }
+
+    .wall-section {
+      padding: 28px 0;
+    }
+
+    .cta-section {
+      padding: 16px 20px 40px;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .wall-tooltip {
+      position: fixed;
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: var(--radius-s);
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      color: var(--text);
+      pointer-events: none;
+      z-index: 1000;
+      white-space: nowrap;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .wall-tooltip.show { opacity: 1; }
+
+    .wall-footer {
+      text-align: center;
+      padding: 0 20px 20px;
+      font-size: 0.78rem;
+      color: var(--subtle);
+    }
+    .wall-footer a { color: var(--muted); }
+    .wall-footer a:hover { color: var(--gold); }
+
+    @media (min-width: 480px) {
+      .hero-title { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="site-logo">⬡</div>
+    <h1>Shiguang Brewing Co.</h1>
+    <p class="tagline">時光釀造所 · Shenzhen</p>
+    <nav class="header-nav">
+      <a href="lookup.html">Look Up Mine</a>
+      <a href="admin.html">Admin</a>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h2 class="hero-title">Own a block on<br><span>The Wall</span></h2>
+    <p class="hero-body">
+      100 wooden blocks. Each engraved with a number.<br>
+      Mounted on our wall in Shenzhen.<br>
+      Your name lives there — forever.
+    </p>
+  </div>
+
+  <!-- Wall Grid -->
+  <section class="wall-section">
+    <div class="wall-wrap">
+      <div class="wall-stats">
+        <span id="claimed-count" class="text-gold" style="font-size:1.3rem;font-weight:700">—</span>
+        <span style="font-size:0.88rem">/100 claimed &nbsp;·&nbsp;</span>
+        <span id="remaining-count" class="text-gold" style="font-size:1.3rem;font-weight:700">—</span>
+        <span style="font-size:0.88rem"> remaining</span>
+      </div>
+
+      <div class="wall-grid" id="wall-grid">
+        <!-- Skeleton loader -->
+        <div id="grid-loader" style="grid-column:1/-1;padding:30px;text-align:center;color:var(--subtle)">
+          <div class="spinner" style="margin:0 auto 10px"></div>
+          Loading wall…
+        </div>
+      </div>
+
+      <div class="wall-legend">
+        <span><span class="legend-dot available"></span>Available</span>
+        <span><span class="legend-dot reserved"></span>Reserved</span>
+        <span><span class="legend-dot paid"></span>Paid</span>
+        <span><span class="legend-dot installed"></span>Installed</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="btn-row side-by-side">
+      <a href="claim.html" class="btn btn-primary">Claim Your Block</a>
+      <a href="lookup.html" class="btn btn-secondary">Look Up Mine</a>
+    </div>
+  </section>
+
+  <!-- Tooltip -->
+  <div class="wall-tooltip" id="wall-tooltip"></div>
+
+  <!-- Footer -->
+  <footer class="wall-footer">
+    HK$199 per block · First batch installs Mar 30, 2026<br>
+    <a href="mailto:hello@shiguangbrewing.com">hello@shiguangbrewing.com</a>
+  </footer>
+
+  <!-- Toast -->
+  <div id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ── CONFIG: Replace with your Supabase project values ──
+    const SUPABASE_URL  = 'https://kbjndsrllqpuaedotdng.supabase.co';
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtiam5kc3JsbHFwdWFlZG90ZG5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4Mjg2NDAsImV4cCI6MjA4NzQwNDY0MH0.gSdKU54sAAAdDoqEhczuj4TxmcNzghMe9WN84zLOaAY';
+
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    // ── Toast helper ──
+    function showToast(msg, duration = 2500) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), duration);
+    }
+
+    // ── Load wall ──
+    async function loadWall() {
+      const { data, error } = await sb
+        .from('blocks')
+        .select('number, status, name, public, message')
+        .order('number');
+
+      if (error) {
+        document.getElementById('grid-loader').textContent = 'Failed to load wall. Check config.';
+        console.error(error);
+        return;
+      }
+
+      const grid = document.getElementById('wall-grid');
+      grid.innerHTML = '';
+
+      let claimed = 0;
+
+      data.forEach(block => {
+        const cell = document.createElement('div');
+        const num  = String(block.number).padStart(3, '0');
+        const isAvailable = block.status === 'available';
+        cell.className = `cell ${block.status}`;
+        cell.dataset.number  = block.number;
+        cell.dataset.status  = block.status;
+        cell.dataset.name    = (block.public && block.name) ? block.name : '';
+        cell.dataset.message = (block.public && block.message) ? block.message : '';
+
+        if (!isAvailable) {
+          cell.innerHTML = `<span class="cell-num">#${num}</span>`;
+          claimed++;
+        }
+
+        grid.appendChild(cell);
+      });
+
+      document.getElementById('claimed-count').textContent  = claimed;
+      document.getElementById('remaining-count').textContent = 100 - claimed;
+    }
+
+    // ── Tooltip logic ──
+    const tooltip = document.getElementById('wall-tooltip');
+
+    function showTooltip(cell, x, y) {
+      const num    = String(parseInt(cell.dataset.number)).padStart(3, '0');
+      const status = cell.dataset.status;
+      const name   = cell.dataset.name;
+      const row    = Math.ceil(cell.dataset.number / 10);
+      const col    = ((cell.dataset.number - 1) % 10) + 1;
+
+      let text = `#${num} · Row ${row}, Col ${col}`;
+      if (status !== 'available') {
+        text += ` · ${status.charAt(0).toUpperCase() + status.slice(1)}`;
+        if (name) text += ` · ${name}`;
+      }
+
+      tooltip.textContent = text;
+      tooltip.classList.add('show');
+      positionTooltip(x, y);
+    }
+
+    function positionTooltip(x, y) {
+      const tw = tooltip.offsetWidth;
+      const th = tooltip.offsetHeight;
+      const vw = window.innerWidth;
+      let left = x + 10;
+      let top  = y - th - 8;
+      if (left + tw > vw - 8) left = x - tw - 10;
+      if (top < 8) top = y + 14;
+      tooltip.style.left = left + 'px';
+      tooltip.style.top  = top  + 'px';
+    }
+
+    // Desktop hover
+    document.getElementById('wall-grid').addEventListener('mouseover', e => {
+      const cell = e.target.closest('.cell');
+      if (!cell) return;
+      showTooltip(cell, e.clientX, e.clientY);
+    });
+    document.getElementById('wall-grid').addEventListener('mousemove', e => {
+      positionTooltip(e.clientX, e.clientY);
+    });
+    document.getElementById('wall-grid').addEventListener('mouseout', e => {
+      if (!e.target.closest('.cell')) return;
+      tooltip.classList.remove('show');
+    });
+
+    // Mobile tap
+    document.getElementById('wall-grid').addEventListener('click', e => {
+      const cell = e.target.closest('.cell');
+      if (!cell) return;
+      const num    = String(parseInt(cell.dataset.number)).padStart(3, '0');
+      const status = cell.dataset.status;
+      const name   = cell.dataset.name;
+
+      if (status === 'available') {
+        showToast(`#${num} is available — go claim it!`);
+      } else if (name) {
+        showToast(`#${num} · ${name}`);
+      } else {
+        showToast(`#${num} · ${status.charAt(0).toUpperCase() + status.slice(1)}`);
+      }
+    });
+
+    // Init
+    loadWall();
+  </script>
+</body>
+</html>

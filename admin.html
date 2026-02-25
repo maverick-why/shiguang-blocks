@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin · Shiguang Brewing Co.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .admin-wrap {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 20px 60px;
+    }
+    .admin-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 16px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .admin-header h2 { margin: 0; }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .stat-card .stat-num {
+      font-size: 1.8rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+    .stat-card .stat-label {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .toolbar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .toolbar input[type="text"] {
+      background: var(--bg2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-s);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.88rem;
+      padding: 8px 12px;
+      outline: none;
+      width: 200px;
+    }
+    .toolbar input:focus { border-color: var(--gold); }
+    td.num-col { font-weight: 700; color: var(--gold); font-size: 1rem; }
+    td.name-col { max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    td.msg-col  { max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-style: italic; }
+    td.mob-col  { font-size: 0.82rem; color: var(--muted); }
+    td.date-col { font-size: 0.78rem; color: var(--subtle); }
+    .notes-input {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.78rem;
+      padding: 4px 6px;
+      width: 120px;
+    }
+    .notes-input:focus { border-color: var(--gold); outline: none; }
+
+    /* Login screen */
+    .login-wrap {
+      max-width: 360px;
+      margin: 80px auto;
+      padding: 0 20px;
+    }
+
+    @media (max-width: 700px) {
+      .admin-table-wrap { font-size: 0.78rem; }
+      th, td { padding: 8px 6px; }
+      td.msg-col, td.mob-col { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── LOGIN SCREEN ── -->
+  <div id="login-screen" class="login-wrap">
+    <div style="text-align:center;margin-bottom:28px">
+      <div class="site-logo" style="margin:0 auto 12px">⬡</div>
+      <h2>Admin Panel</h2>
+      <p class="text-sm text-muted" style="margin-top:4px">Shiguang Brewing Co.</p>
+    </div>
+    <div class="card">
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="pw-input" placeholder="Enter admin password" autocomplete="current-password">
+      </div>
+      <div id="pw-error" class="form-error"></div>
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn btn-primary" id="btn-login">Sign In</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ADMIN PANEL ── -->
+  <div id="admin-panel" style="display:none">
+    <div class="admin-wrap">
+
+      <div class="admin-header">
+        <div>
+          <h2>Wall of Blocks — Admin</h2>
+          <p class="text-xs text-muted" style="margin-top:2px">
+            <a href="index.html" style="color:var(--muted)">← View public wall</a>
+          </p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" id="btn-export-csv">⬇ Export CSV</button>
+          <button class="btn btn-secondary btn-sm" id="btn-refresh">↻ Refresh</button>
+          <button class="btn btn-sm" id="btn-logout"
+            style="background:transparent;border:1px solid var(--border2);color:var(--muted)">Sign Out</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num text-gold" id="s-claimed">—</div>
+          <div class="stat-label">Claimed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--amber)" id="s-pending">—</div>
+          <div class="stat-label">Pending Payment</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num text-gold" id="s-paid">—</div>
+          <div class="stat-label">Paid</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:var(--green)" id="s-installed">—</div>
+          <div class="stat-label">Installed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num text-muted" id="s-available">—</div>
+          <div class="stat-label">Available</div>
+        </div>
+      </div>
+
+      <!-- Batch date setting -->
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <span class="text-sm text-muted" style="min-width:140px">Installation Batch Date:</span>
+          <input type="text" id="batch-date-input" value="Mar 30, 2026"
+            style="background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius-s);
+                   color:var(--text);font-family:inherit;font-size:0.9rem;padding:7px 12px;outline:none;
+                   flex:1;min-width:140px">
+          <button class="btn btn-ghost btn-sm" id="btn-update-batch">Update All Pending</button>
+        </div>
+        <p class="text-xs text-muted" style="margin-top:8px">
+          Updates the batch date for all blocks that haven't been installed yet.
+        </p>
+      </div>
+
+      <!-- Filters + search -->
+      <div class="toolbar">
+        <div class="filter-pills" style="margin:0">
+          <button class="pill active" data-filter="all">All</button>
+          <button class="pill" data-filter="pending">Pending</button>
+          <button class="pill" data-filter="paid">Paid</button>
+          <button class="pill" data-filter="installed">Installed</button>
+          <button class="pill" data-filter="refunded">Refunded</button>
+        </div>
+        <input type="text" id="search-input" placeholder="Search name / mobile…">
+      </div>
+
+      <p id="row-count" class="text-xs text-muted" style="margin-bottom:8px"></p>
+
+      <!-- Table -->
+      <div class="admin-table-wrap">
+        <table id="admin-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th class="mob-col">Mobile</th>
+              <th class="msg-col">Message</th>
+              <th>Block Status</th>
+              <th>Payment</th>
+              <th>Created</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-tbody">
+            <tr><td colspan="9" style="text-align:center;padding:30px;color:var(--muted)">
+              <div class="spinner" style="margin:0 auto 10px"></div>
+              Loading…
+            </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- Confirm dialog -->
+  <div id="confirm-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9000;display:none;align-items:center;justify-content:center">
+    <div style="background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:24px;max-width:340px;width:90%;margin:20px">
+      <h3 id="confirm-title" style="margin-bottom:8px">Confirm Action</h3>
+      <p id="confirm-body" class="text-sm text-muted" style="margin-bottom:20px"></p>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary btn-sm" id="confirm-ok" style="flex:1">Confirm</button>
+        <button class="btn btn-ghost btn-sm" id="confirm-cancel" style="flex:1">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // ══════════════════════════════════════════
+    //  CONFIG — Replace all three values below
+    // ══════════════════════════════════════════
+    const ADMIN_PASSWORD     = 'shiguang2026';           // CHANGE THIS
+    const SUPABASE_URL       = 'https://kbjndsrllqpuaedotdng.supabase.co';
+    const SUPABASE_ANON      = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtiam5kc3JsbHFwdWFlZG90ZG5nIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4Mjg2NDAsImV4cCI6MjA4NzQwNDY0MH0.gSdKU54sAAAdDoqEhczuj4TxmcNzghMe9WN84zLOaAY';
+    const SUPABASE_SVC_KEY   = 'YOUR_SUPABASE_SERVICE_ROLE_KEY'; // CHANGE THIS
+    // ══════════════════════════════════════════
+
+    let sbAnon, sbSvc;
+    let allBlocks = [];
+    let activeFilter = 'all';
+
+    function showToast(msg, dur = 3000) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), dur);
+    }
+
+    // ── Confirm dialog ──
+    function confirm(title, body) {
+      return new Promise(resolve => {
+        const ov = document.getElementById('confirm-overlay');
+        document.getElementById('confirm-title').textContent = title;
+        document.getElementById('confirm-body').textContent  = body;
+        ov.style.display = 'flex';
+        const ok  = document.getElementById('confirm-ok');
+        const can = document.getElementById('confirm-cancel');
+        const cleanup = () => { ov.style.display = 'none'; };
+        ok.onclick  = () => { cleanup(); resolve(true);  };
+        can.onclick = () => { cleanup(); resolve(false); };
+      });
+    }
+
+    // ── Login ──
+    document.getElementById('btn-login').addEventListener('click', () => {
+      const pw = document.getElementById('pw-input').value;
+      const err = document.getElementById('pw-error');
+      if (pw !== ADMIN_PASSWORD) {
+        err.textContent = 'Incorrect password.';
+        err.classList.add('show');
+        return;
+      }
+      err.classList.remove('show');
+      document.getElementById('login-screen').style.display  = 'none';
+      document.getElementById('admin-panel').style.display   = '';
+      sbAnon = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      sbSvc  = window.supabase.createClient(SUPABASE_URL, SUPABASE_SVC_KEY);
+      loadBlocks();
+    });
+    document.getElementById('pw-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('btn-login').click();
+    });
+
+    document.getElementById('btn-logout').addEventListener('click', () => {
+      document.getElementById('admin-panel').style.display  = 'none';
+      document.getElementById('login-screen').style.display = '';
+      document.getElementById('pw-input').value = '';
+    });
+
+    // ── Load blocks ──
+    async function loadBlocks() {
+      const tbody = document.getElementById('admin-tbody');
+      tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--muted)">
+        <div class="spinner" style="margin:0 auto 10px"></div>Loading…</td></tr>`;
+
+      const { data, error } = await sbSvc
+        .from('blocks')
+        .select('*')
+        .order('number');
+
+      if (error) {
+        showToast('Error loading blocks: ' + error.message);
+        return;
+      }
+
+      allBlocks = data;
+      updateStats(data);
+      renderTable();
+    }
+
+    // ── Stats ──
+    function updateStats(data) {
+      const claimed   = data.filter(b => b.status !== 'available').length;
+      const pending   = data.filter(b => b.payment_status === 'pending' && b.status !== 'available').length;
+      const paid      = data.filter(b => b.payment_status === 'paid').length;
+      const installed = data.filter(b => b.status === 'installed').length;
+      const available = data.filter(b => b.status === 'available').length;
+      document.getElementById('s-claimed').textContent   = claimed;
+      document.getElementById('s-pending').textContent   = pending;
+      document.getElementById('s-paid').textContent      = paid;
+      document.getElementById('s-installed').textContent = installed;
+      document.getElementById('s-available').textContent = available;
+    }
+
+    // ── Filters ──
+    document.querySelectorAll('.pill[data-filter]').forEach(pill => {
+      pill.addEventListener('click', () => {
+        document.querySelectorAll('.pill[data-filter]').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        activeFilter = pill.dataset.filter;
+        renderTable();
+      });
+    });
+    document.getElementById('search-input').addEventListener('input', renderTable);
+
+    // ── Render table ──
+    function renderTable() {
+      const q = document.getElementById('search-input').value.toLowerCase().trim();
+      let filtered = allBlocks.filter(b => b.status !== 'available');
+
+      if (activeFilter === 'pending')  filtered = filtered.filter(b => b.payment_status === 'pending');
+      if (activeFilter === 'paid')     filtered = filtered.filter(b => b.payment_status === 'paid');
+      if (activeFilter === 'refunded') filtered = filtered.filter(b => b.payment_status === 'refunded');
+      if (activeFilter === 'installed') filtered = filtered.filter(b => b.status === 'installed');
+
+      if (q) {
+        filtered = filtered.filter(b =>
+          (b.name   && b.name.toLowerCase().includes(q)) ||
+          (b.mobile && b.mobile.includes(q)) ||
+          (String(b.number).includes(q))
+        );
+      }
+
+      document.getElementById('row-count').textContent = `${filtered.length} record${filtered.length !== 1 ? 's' : ''}`;
+
+      const tbody = document.getElementById('admin-tbody');
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:30px;color:var(--subtle)">No records</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(b => {
+        const num     = String(b.number).padStart(3, '0');
+        const created = b.created_at ? new Date(b.created_at).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}) : '—';
+        const payBadge = {
+          pending: 'badge-pending', paid: 'badge-paid', refunded: 'badge-refunded'
+        };
+        const statusBadge = {
+          reserved: 'badge-reserved', engraving: 'badge-paid', installed: 'badge-installed'
+        };
+
+        return `<tr data-id="${b.id}" data-number="${b.number}">
+          <td class="num-col">#${num}</td>
+          <td class="name-col">${b.name || '<span style="color:var(--subtle)">—</span>'}</td>
+          <td class="mob-col">${b.mobile || '—'}</td>
+          <td class="msg-col">${b.message ? `"${b.message}"` : ''}</td>
+          <td>
+            <span class="badge ${statusBadge[b.status] || 'badge-available'}" style="font-size:0.7rem">
+              ${b.status}
+            </span>
+          </td>
+          <td>
+            <span class="badge ${payBadge[b.payment_status] || 'badge-pending'}" style="font-size:0.7rem">
+              ${b.payment_status || 'pending'}
+            </span>
+          </td>
+          <td class="date-col">${created}</td>
+          <td>
+            <input type="text" class="notes-input" data-id="${b.id}" value="${b.notes || ''}"
+              placeholder="Add note…" title="Notes">
+          </td>
+          <td>
+            <div class="td-actions">
+              ${b.payment_status !== 'paid' ? `
+              <button class="btn btn-green btn-sm" data-action="mark-paid" data-id="${b.id}" data-num="${b.number}">
+                ✓ Paid
+              </button>` : ''}
+              ${b.status !== 'installed' && b.payment_status === 'paid' ? `
+              <button class="btn btn-ghost btn-sm" data-action="mark-installed" data-id="${b.id}" data-num="${b.number}">
+                📦 Install
+              </button>` : ''}
+              ${b.payment_status !== 'refunded' ? `
+              <button class="btn btn-danger btn-sm" data-action="refund" data-id="${b.id}" data-num="${b.number}">
+                ✕
+              </button>` : ''}
+              <a href="success.html?number=${b.number}" target="_blank"
+                class="btn btn-ghost btn-sm" title="View certificate">🎖</a>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+
+      // Attach action listeners
+      tbody.querySelectorAll('button[data-action]').forEach(btn => {
+        btn.addEventListener('click', handleAction);
+      });
+
+      // Notes blur save
+      tbody.querySelectorAll('.notes-input').forEach(input => {
+        input.addEventListener('blur', async () => {
+          const id  = input.dataset.id;
+          const val = input.value.trim();
+          const { error } = await sbSvc.from('blocks').update({ notes: val || null }).eq('id', id);
+          if (!error) showToast('Note saved');
+          else showToast('Error saving note');
+        });
+      });
+    }
+
+    // ── Actions ──
+    async function handleAction(e) {
+      const action = e.currentTarget.dataset.action;
+      const id     = e.currentTarget.dataset.id;
+      const num    = e.currentTarget.dataset.num;
+      const numPad = String(num).padStart(3, '0');
+
+      if (action === 'mark-paid') {
+        const ok = await confirm(`Mark #${numPad} as Paid?`,
+          `This will confirm payment and allow the user to view their certificate.`);
+        if (!ok) return;
+
+        const { error } = await sbSvc.from('blocks').update({
+          payment_status: 'paid',
+          paid_at: new Date().toISOString(),
+        }).eq('id', id);
+
+        if (error) { showToast('Error: ' + error.message); return; }
+        showToast(`#${numPad} marked as paid ✓`);
+        loadBlocks();
+      }
+
+      if (action === 'mark-installed') {
+        const ok = await confirm(`Mark #${numPad} as Installed?`,
+          `This will update the block status to Installed.`);
+        if (!ok) return;
+
+        const { error } = await sbSvc.from('blocks')
+          .update({ status: 'installed' })
+          .eq('id', id);
+
+        if (error) { showToast('Error: ' + error.message); return; }
+        showToast(`#${numPad} marked as installed ✓`);
+        loadBlocks();
+      }
+
+      if (action === 'refund') {
+        const ok = await confirm(`Refund block #${numPad}?`,
+          `This marks it as refunded and resets it to available so it can be claimed again.`);
+        if (!ok) return;
+
+        // Reset block to available
+        const { error } = await sbSvc.from('blocks').update({
+          name:           null,
+          mobile:         null,
+          message:        null,
+          public:         true,
+          status:         'available',
+          payment_status: 'pending',
+          paid_at:        null,
+          install_photo:  null,
+          notes:          null,
+        }).eq('id', id);
+
+        if (error) { showToast('Error: ' + error.message); return; }
+        showToast(`#${numPad} refunded and reset to available`);
+        loadBlocks();
+      }
+    }
+
+    // ── Update batch date ──
+    document.getElementById('btn-update-batch').addEventListener('click', async () => {
+      const newDate = document.getElementById('batch-date-input').value.trim();
+      if (!newDate) return;
+      const ok = await confirm(`Update batch date to "${newDate}"?`,
+        `This will update the installation date for all blocks that haven't been installed yet.`);
+      if (!ok) return;
+
+      const { error } = await sbSvc.from('blocks')
+        .update({ batch: newDate })
+        .neq('status', 'installed');
+
+      if (error) { showToast('Error: ' + error.message); return; }
+      showToast('Batch date updated ✓');
+      loadBlocks();
+    });
+
+    // ── Refresh ──
+    document.getElementById('btn-refresh').addEventListener('click', loadBlocks);
+
+    // ── Export CSV ──
+    document.getElementById('btn-export-csv').addEventListener('click', () => {
+      const claimed = allBlocks.filter(b => b.status !== 'available');
+      if (claimed.length === 0) { showToast('No data to export.'); return; }
+
+      const headers = ['Block', 'Name', 'Mobile', 'Message', 'Public', 'Status', 'Payment', 'Batch', 'Created', 'Notes'];
+      const rows = claimed.map(b => [
+        String(b.number).padStart(3,'0'),
+        b.name || '',
+        b.mobile || '',
+        b.message || '',
+        b.public ? 'Yes' : 'No',
+        b.status,
+        b.payment_status || 'pending',
+        b.batch || '',
+        b.created_at ? new Date(b.created_at).toLocaleDateString() : '',
+        b.notes || '',
+      ]);
+
+      const csv = [headers, ...rows]
+        .map(row => row.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
+        .join('\r\n');
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url  = URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `shiguang-blocks-${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSV exported ✓');
+    });
+  </script>
+</body>
+</html>
