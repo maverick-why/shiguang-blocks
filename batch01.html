@@ -606,7 +606,7 @@
     const { data } = await sb
       .from('members')
       .select('tier')
-      .neq('status', 'refunded');
+      .eq('status', 'paid');
 
     if (data) {
       const taken5000 = data.filter(m => m.tier === 'black').length;
